@@ -13,8 +13,8 @@ export default function Hero() {
   const slides = [
     {
       image: '/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka.webp',
-      title: 'Welcome to Our Church',
-      subtitle: 'Join us in worship'
+      title: t('heroTitle'),
+      subtitle: t('heroSub')
     },
     {
       image: '/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(1).webp',
@@ -59,17 +59,18 @@ export default function Hero() {
              style={{ backgroundImage: 'linear-gradient(#1877f2 0.5px, transparent 0.5px), linear-gradient(90deg, #1877f2 0.5px, transparent 0.5px)', backgroundSize: '60px 60px' }} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center pb-32">
+      <div className="max-w-7xl mx-auto px-0 md:px-6 grid lg:grid-cols-2 gap-0 md:gap-16 items-center pb-24 md:pb-32">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
+          className="order-2 lg:order-1 text-center lg:text-left px-6 md:px-0"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-blue-100 text-blue-700 text-sm font-bold uppercase tracking-wider mb-6"
+            className="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-blue-100 text-blue-700 text-sm font-bold uppercase tracking-wider mb-6 mx-auto lg:mx-0"
           >
             <Heart size={16} className="text-red-500" />
             {t('welcome')}
@@ -79,7 +80,7 @@ export default function Hero() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6"
+            className="text-4xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6 mx-auto lg:mx-0 max-w-lg lg:max-w-none"
           >
             {t('heroTitle')}
           </motion.h1>
@@ -88,7 +89,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-lg text-gray-600 mb-8 max-w-lg leading-relaxed"
+            className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 max-w-lg leading-relaxed mx-auto lg:mx-0"
           >
             {t('heroSub')}
           </motion.p>
@@ -98,48 +99,59 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="grid grid-cols-3 gap-4 mb-8"
+            className="grid grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8 max-w-md mx-auto lg:mx-0"
           >
-            <div className="text-center p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-              <Users size={24} className="text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">2,500+</div>
-              <div className="text-xs text-gray-500">Members</div>
-            </div>
-            <div className="text-center p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-              <Calendar size={24} className="text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">18</div>
-              <div className="text-xs text-gray-500">Years</div>
-            </div>
-            <div className="text-center p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-              <MapPin size={24} className="text-purple-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">5</div>
-              <div className="text-xs text-gray-500">Locations</div>
-            </div>
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              className="text-center p-3 md:p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-sm border border-blue-200"
+            >
+              <Users size={20} className="text-blue-600 mx-auto mb-1 md:mb-2" />
+              <div className="text-xl md:text-2xl font-bold text-gray-900">2.5K+</div>
+              <div className="text-[10px] md:text-xs text-gray-500">Members</div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              className="text-center p-3 md:p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-sm border border-green-200"
+            >
+              <Calendar size={20} className="text-green-600 mx-auto mb-1 md:mb-2" />
+              <div className="text-xl md:text-2xl font-bold text-gray-900">18</div>
+              <div className="text-[10px] md:text-xs text-gray-500">Years</div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              className="text-center p-3 md:p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm border border-purple-200"
+            >
+              <MapPin size={20} className="text-purple-600 mx-auto mb-1 md:mb-2" />
+              <div className="text-xl md:text-2xl font-bold text-gray-900">5</div>
+              <div className="text-[10px] md:text-xs text-gray-500">Locations</div>
+            </motion.div>
           </motion.div>
           
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="flex flex-wrap gap-4"
+            className="flex flex-wrap gap-3 md:gap-4 justify-center lg:justify-start"
           >
-            <button className="bg-[#1877f2] text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-600 transition-all shadow-xl shadow-blue-200 flex items-center gap-2 group">
-              {t('joinLive')}
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="bg-white text-gray-900 border border-gray-200 px-8 py-4 rounded-2xl font-bold hover:bg-gray-50 transition-all flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                <Play size={16} fill="currentColor" />
-              </div>
-              {t('viewServices')}
-            </button>
-            <button 
-              onClick={speakWelcome}
-              className="p-4 bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-100 transition-all border border-blue-100 flex items-center justify-center"
-              title="Listen to Welcome"
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-[#1877f2] to-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-bold hover:shadow-xl transition-all shadow-lg shadow-blue-200 flex items-center gap-2 group"
             >
-              <Volume2 size={24} />
-            </button>
+              {t('joinLive')}
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-white text-gray-900 border-2 border-gray-200 px-6 md:px-8 py-3 md:py-4 rounded-2xl font-bold hover:bg-gray-50 transition-all flex items-center gap-2 shadow-md"
+            >
+              <div className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center text-blue-600">
+                <Play size={14} fill="currentColor" />
+              </div>
+              <span className="hidden md:inline">{t('viewServices')}</span>
+              <span className="md:hidden text-sm">Watch</span>
+            </motion.button>
           </motion.div>
         </motion.div>
 
@@ -147,11 +159,11 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="relative"
+          className="relative order-1 lg:order-2 w-full"
         >
           {/* Image Slider */}
-          <div className="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl bg-white border-4 border-white">
-            <div className="relative h-[550px]">
+          <div className="relative z-10 rounded-none md:rounded-[2rem] overflow-hidden shadow-none md:shadow-2xl bg-white border-0 md:border-4 md:border-white">
+            <div className="relative h-[400px] md:h-[550px]">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentSlide}
@@ -221,7 +233,7 @@ export default function Hero() {
           <motion.div 
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -bottom-6 -left-6 z-20 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 max-w-[220px]"
+            className="hidden md:block absolute -bottom-6 -left-6 z-20 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 max-w-[220px]"
           >
             <div className="flex items-center gap-2 mb-3">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
@@ -239,7 +251,7 @@ export default function Hero() {
           <motion.div 
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute -top-6 -right-6 z-20 bg-white p-4 rounded-xl shadow-lg border border-gray-100 max-w-[180px]"
+            className="hidden md:block absolute -top-6 -right-6 z-20 bg-white p-4 rounded-xl shadow-lg border border-gray-100 max-w-[180px]"
           >
             <div className="flex items-center gap-2 mb-2">
               <Heart size={16} className="text-red-500" />
@@ -252,13 +264,13 @@ export default function Hero() {
           </motion.div>
 
           {/* Background decorative elements */}
-          <div className="absolute -top-8 -right-8 w-32 h-32 bg-blue-200/30 rounded-full blur-2xl" />
-          <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-purple-200/30 rounded-full blur-2xl" />
+          <div className="hidden md:block absolute -top-8 -right-8 w-32 h-32 bg-blue-200/30 rounded-full blur-2xl" />
+          <div className="hidden md:block absolute -bottom-8 -left-8 w-32 h-32 bg-purple-200/30 rounded-full blur-2xl" />
         </motion.div>
       </div>
 
-      {/* Interactive Image Gallery */}
-      <div className="max-w-7xl mx-auto px-6 pb-16">
+      {/* Interactive Image Gallery - Hidden on Mobile */}
+      <div className="hidden md:block max-w-7xl mx-auto px-6 pb-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {slides.map((slide, index) => (
             <motion.div
@@ -287,8 +299,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="max-w-7xl mx-auto px-6 pb-8">
+      {/* Scroll Indicator - Hidden on Mobile */}
+      <div className="hidden md:block max-w-7xl mx-auto px-6 pb-8">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

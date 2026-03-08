@@ -184,14 +184,13 @@ export default function Navbar() {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Mobile Header - Enhanced */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-2 shrink-0 cursor-pointer group"
-          onClick={() => setSite(isWordLight ? 'CityLight' : 'WordLight')}
-          title={isWordLight ? "Switch to CityLight" : "Switch to Word Light"}
+          className="flex items-center gap-2 shrink-0"
         >
-          <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center bg-transparent transition-transform group-hover:scale-110">
+          <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl overflow-hidden flex items-center justify-center bg-white shadow-md">
             <img 
               src="/app logo/download (10).jpg" 
               alt="Church Logo" 
@@ -207,6 +206,36 @@ export default function Navbar() {
             </span>
           </div>
         </motion.div>
+
+        {/* Mobile Top Icons - Enhanced */}
+        <div className="md:hidden flex items-center gap-2">
+          <motion.button 
+            whileTap={{ scale: 0.9 }}
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 shadow-sm"
+          >
+            <Search size={20} />
+          </motion.button>
+          <motion.button 
+            whileTap={{ scale: 0.9 }}
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-red-50 to-red-100 text-red-600 shadow-sm relative"
+          >
+            <Bell size={20} />
+            <motion.div 
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-lg"
+            >
+              3
+            </motion.div>
+          </motion.button>
+          <motion.button 
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setLangOpen(!langOpen)}
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 text-purple-600 text-xs font-bold shadow-sm"
+          >
+            {currentLang.code}
+          </motion.button>
+        </div>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-1 lg:gap-3 flex-1 justify-center px-4">
@@ -406,13 +435,7 @@ export default function Navbar() {
           </motion.button>
         </div>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="md:hidden p-2 text-gray-600"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile Toggle - Removed */}
       </div>
 
       {/* Mobile Menu */}

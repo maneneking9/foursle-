@@ -15,6 +15,7 @@ import About from './components/About';
 import Chatbot from './components/Chatbot';
 import TheologicalTools from './components/TheologicalTools';
 import Footer from './components/Footer';
+import MobileBottomNav from './components/MobileBottomNav';
 import { useSite } from './context/SiteContext';
 import { cn } from './lib/utils';
 
@@ -52,6 +53,7 @@ export default function App() {
         <About />
       </main>
       <Chatbot />
+      <MobileBottomNav />
       <Footer />
     </div>
   );
