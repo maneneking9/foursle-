@@ -20,7 +20,7 @@ export default function Branches() {
       const images = await api.getBranchImages();
       setBranchImages(images);
     } catch (error) {
-      console.error('Failed to load branch images:', error);
+      console.log('Using static images');
     }
   };
 

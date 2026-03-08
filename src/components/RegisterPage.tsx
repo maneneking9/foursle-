@@ -46,7 +46,7 @@ export default function RegisterPage() {
         setError(result.message || 'Registration failed');
       }
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError('Backend API not available. This is a demo deployment. Run locally for full functionality.');
     }
     setLoading(false);
   };

@@ -1,9 +1,15 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || '';
+
+const safeFetch = async (url: string, options?: RequestInit) => {
+  if (!API_URL) {
+    throw new Error('API not configured');
+  }
+  return fetch(url, options);
+};
 
 export const api = {
-  // Auth
   login: async (email: string, password: string) => {
-    const res = await fetch(`${API_URL}/api/auth/login`, {
+    const res = await safeFetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -12,7 +18,7 @@ export const api = {
   },
 
   register: async (email: string, password: string, name: string) => {
-    const res = await fetch(`${API_URL}/api/auth/register`, {
+    const res = await safeFetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, name })
@@ -20,15 +26,13 @@ export const api = {
     return res.json();
   },
 
-  // Get user profile
   getProfile: async (userId: number) => {
-    const res = await fetch(`${API_URL}/api/auth/profile/${userId}`);
+    const res = await safeFetch(`${API_URL}/api/auth/profile/${userId}`);
     return res.json();
   },
 
-  // Update user profile
   updateProfile: async (userId: number, data: { name: string; email: string }) => {
-    const res = await fetch(`${API_URL}/api/auth/profile/${userId}`, {
+    const res = await safeFetch(`${API_URL}/api/auth/profile/${userId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -36,9 +40,8 @@ export const api = {
     return res.json();
   },
 
-  // Change password
   changePassword: async (userId: number, oldPassword: string, newPassword: string) => {
-    const res = await fetch(`${API_URL}/api/auth/change-password`, {
+    const res = await safeFetch(`${API_URL}/api/auth/change-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, oldPassword, newPassword })
@@ -46,14 +49,17 @@ export const api = {
     return res.json();
   },
 
-  // Hero Slides
   getHeroSlides: async () => {
-    const res = await fetch(`${API_URL}/api/hero-slides`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/hero-slides`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
   
   createHeroSlide: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/admin/hero-slides`, {
+    const res = await safeFetch(`${API_URL}/api/admin/hero-slides`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -62,7 +68,7 @@ export const api = {
   },
 
   updateHeroSlide: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/api/admin/hero-slides/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/admin/hero-slides/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -71,20 +77,23 @@ export const api = {
   },
 
   deleteHeroSlide: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/admin/hero-slides/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/admin/hero-slides/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
-  // Events
   getEvents: async () => {
-    const res = await fetch(`${API_URL}/api/events`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/events`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   createEvent: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/events`, {
+    const res = await safeFetch(`${API_URL}/api/events`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -93,7 +102,7 @@ export const api = {
   },
 
   updateEvent: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/api/events/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/events/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -102,14 +111,14 @@ export const api = {
   },
 
   deleteEvent: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/events/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/events/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
   registerForEvent: async (eventId: number, userId: number) => {
-    const res = await fetch(`${API_URL}/api/events/${eventId}/register`, {
+    const res = await safeFetch(`${API_URL}/api/events/${eventId}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: userId })
@@ -117,14 +126,17 @@ export const api = {
     return res.json();
   },
 
-  // Prayer Requests
   getPrayers: async () => {
-    const res = await fetch(`${API_URL}/api/prayers`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/prayers`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   createPrayer: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/prayers`, {
+    const res = await safeFetch(`${API_URL}/api/prayers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -133,20 +145,23 @@ export const api = {
   },
 
   prayForRequest: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/prayers/${id}/pray`, {
+    const res = await safeFetch(`${API_URL}/api/prayers/${id}/pray`, {
       method: 'POST'
     });
     return res.json();
   },
 
-  // Sermons
   getSermons: async () => {
-    const res = await fetch(`${API_URL}/api/sermons`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/sermons`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   createSermon: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/sermons`, {
+    const res = await safeFetch(`${API_URL}/api/sermons`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -155,7 +170,7 @@ export const api = {
   },
 
   updateSermon: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/api/sermons/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/sermons/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -164,39 +179,42 @@ export const api = {
   },
 
   deleteSermon: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/sermons/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/sermons/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
   viewSermon: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/sermons/${id}/view`, {
+    const res = await safeFetch(`${API_URL}/api/sermons/${id}/view`, {
       method: 'POST'
     });
     return res.json();
   },
 
   likeSermon: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/sermons/${id}/like`, {
+    const res = await safeFetch(`${API_URL}/api/sermons/${id}/like`, {
       method: 'POST'
     });
     return res.json();
   },
 
-  // Testimonies
   getTestimonies: async () => {
-    const res = await fetch(`${API_URL}/api/testimonies`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/testimonies`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   getAdminTestimonies: async () => {
-    const res = await fetch(`${API_URL}/api/admin/testimonies`);
+    const res = await safeFetch(`${API_URL}/api/admin/testimonies`);
     return res.json();
   },
 
   createTestimony: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/testimonies`, {
+    const res = await safeFetch(`${API_URL}/api/testimonies`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -205,27 +223,30 @@ export const api = {
   },
 
   approveTestimony: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/admin/testimonies/${id}/approve`, {
+    const res = await safeFetch(`${API_URL}/api/admin/testimonies/${id}/approve`, {
       method: 'PUT'
     });
     return res.json();
   },
 
   deleteTestimony: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/testimonies/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/testimonies/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
-  // Groups
   getGroups: async () => {
-    const res = await fetch(`${API_URL}/api/groups`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/groups`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   createGroup: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/groups`, {
+    const res = await safeFetch(`${API_URL}/api/groups`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -234,7 +255,7 @@ export const api = {
   },
 
   updateGroup: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/api/groups/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/groups/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -243,20 +264,23 @@ export const api = {
   },
 
   deleteGroup: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/groups/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/groups/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
-  // Announcements
   getAnnouncements: async () => {
-    const res = await fetch(`${API_URL}/api/announcements`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/announcements`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   createAnnouncement: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/announcements`, {
+    const res = await safeFetch(`${API_URL}/api/announcements`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -265,7 +289,7 @@ export const api = {
   },
 
   updateAnnouncement: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/api/announcements/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/announcements/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -274,20 +298,23 @@ export const api = {
   },
 
   deleteAnnouncement: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/announcements/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/announcements/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
-  // Gallery
   getGallery: async () => {
-    const res = await fetch(`${API_URL}/api/gallery`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/gallery`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   createGalleryImage: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/gallery`, {
+    const res = await safeFetch(`${API_URL}/api/gallery`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -296,7 +323,7 @@ export const api = {
   },
 
   updateGalleryImage: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/api/gallery/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/gallery/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -305,18 +332,17 @@ export const api = {
   },
 
   deleteGalleryImage: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/gallery/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/gallery/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
-  // Upload
   uploadFile: async (file: File, folder?: string) => {
     const reader = new FileReader();
     return new Promise((resolve, reject) => {
       reader.onload = async () => {
-        const res = await fetch(`${API_URL}/api/upload`, {
+        const res = await safeFetch(`${API_URL}/api/upload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
@@ -333,14 +359,17 @@ export const api = {
     });
   },
 
-  // Branch Images
   getBranchImages: async () => {
-    const res = await fetch(`${API_URL}/api/branch-images`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/branch-images`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   createBranchImage: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/branch-images`, {
+    const res = await safeFetch(`${API_URL}/api/branch-images`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -349,21 +378,24 @@ export const api = {
   },
 
   deleteBranchImage: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/branch-images/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/branch-images/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
-  // Dynamic Images
   getDynamicImages: async (section?: string) => {
-    const url = section ? `${API_URL}/api/dynamic-images?section=${section}` : `${API_URL}/api/dynamic-images`;
-    const res = await fetch(url);
-    return res.json();
+    try {
+      const url = section ? `${API_URL}/api/dynamic-images?section=${section}` : `${API_URL}/api/dynamic-images`;
+      const res = await safeFetch(url);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   createDynamicImage: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/dynamic-images`, {
+    const res = await safeFetch(`${API_URL}/api/dynamic-images`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -372,21 +404,23 @@ export const api = {
   },
 
   deleteDynamicImage: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/dynamic-images/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/dynamic-images/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
-  // Search
   search: async (query: string) => {
-    const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}`);
+      return res.json();
+    } catch {
+      return { events: [], sermons: [], groups: [], testimonies: [], announcements: [], members: [] };
+    }
   },
 
-  // Church Member Registration
   registerMember: async (data: any) => {
-    const res = await fetch(`${API_URL}/api/members/register`, {
+    const res = await safeFetch(`${API_URL}/api/members/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -395,17 +429,21 @@ export const api = {
   },
 
   getMembers: async () => {
-    const res = await fetch(`${API_URL}/api/members`);
-    return res.json();
+    try {
+      const res = await safeFetch(`${API_URL}/api/members`);
+      return res.json();
+    } catch {
+      return [];
+    }
   },
 
   getMember: async (id: number) => {
-    const res = await fetch(`${API_URL}/api/members/${id}`);
+    const res = await safeFetch(`${API_URL}/api/members/${id}`);
     return res.json();
   },
 
   getMembersByLocation: async (location: string) => {
-    const res = await fetch(`${API_URL}/api/members/location/${location}`);
+    const res = await safeFetch(`${API_URL}/api/members/location/${location}`);
     return res.json();
   }
 };

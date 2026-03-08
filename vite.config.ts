@@ -13,6 +13,7 @@ export default defineConfig(() => {
     },
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
+      allowedHosts: ['foursquarecurch.onrender.com'],
     },
   };
 });

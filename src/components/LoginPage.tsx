@@ -33,7 +33,7 @@ export default function LoginPage() {
         setError('Invalid email or password');
       }
     } catch (err) {
-      setError('Connection failed. Please try again.');
+      setError('Backend API not available. This is a demo deployment. Please run locally for full functionality.');
     }
     setLoading(false);
   };

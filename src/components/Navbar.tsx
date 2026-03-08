@@ -189,7 +189,7 @@ export default function Navbar() {
         >
           <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl overflow-hidden flex items-center justify-center bg-white shadow-md">
             <img 
-              src="/app logo/download (10).jpg" 
+              src="/logo.jpg" 
               alt="Church Logo" 
               className="w-full h-full object-cover"
             />
