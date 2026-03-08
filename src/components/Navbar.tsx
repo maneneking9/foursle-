@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Church, Home, Calendar, BookOpen, Info, Radio, Map, Image as ImageIcon, Languages, ChevronDown, Heart, Book, Sun, Moon, User, Users, Sparkles, HelpCircle, CheckCircle2, Volume2, VolumeX, History as HistoryIcon, Star, Search, Bell } from 'lucide-react';
+import { Menu, X, Church, Home, Calendar, BookOpen, Info, Radio, Map, Image as ImageIcon, Languages, ChevronDown, Heart, Book, Sun, Moon, User, Users, Sparkles, HelpCircle, CheckCircle2, Volume2, VolumeX, History as HistoryIcon, Star, Search, Bell, Lock } from 'lucide-react';
 import { cn } from '../lib/utils';
-import RegistrationModal from './RegistrationModal';
 import ChurchQuiz from './ChurchQuiz';
 import WordDashboard from './WordDashboard';
+import SearchModal from './SearchModal';
 import { useTranslation } from '../context/LanguageContext';
-
 import { useSite } from '../context/SiteContext';
 
 export default function Navbar() {
@@ -17,6 +16,7 @@ export default function Navbar() {
   const [activeItem, setActiveItem] = useState('home');
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isWordDashboardOpen, setIsWordDashboardOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(() => {
     const saved = localStorage.getItem('church_voice_muted');
     return saved === 'true';
@@ -70,8 +70,6 @@ export default function Navbar() {
   useEffect(() => {
     localStorage.setItem('church_voice_muted', isMuted.toString());
   }, [isMuted]);
-
-  const [isRegModalOpen, setIsRegModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -184,7 +182,6 @@ export default function Navbar() {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Mobile Header - Enhanced */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -207,27 +204,15 @@ export default function Navbar() {
           </div>
         </motion.div>
 
-        {/* Mobile Top Icons - Enhanced */}
         <div className="md:hidden flex items-center gap-2">
           <motion.button 
             whileTap={{ scale: 0.9 }}
+            onClick={() => setIsSearchOpen(true)}
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 shadow-sm"
           >
             <Search size={20} />
           </motion.button>
-          <motion.button 
-            whileTap={{ scale: 0.9 }}
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-red-50 to-red-100 text-red-600 shadow-sm relative"
-          >
-            <Bell size={20} />
-            <motion.div 
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-lg"
-            >
-              3
-            </motion.div>
-          </motion.button>
+
           <motion.button 
             whileTap={{ scale: 0.9 }}
             onClick={() => setLangOpen(!langOpen)}
@@ -237,9 +222,8 @@ export default function Navbar() {
           </motion.button>
         </div>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-1 lg:gap-3 flex-1 justify-center px-4">
-          <div className="flex items-center">
+        <div className="hidden md:flex items-center gap-1 flex-1 justify-center px-2">
+          <div className="flex items-center gap-1">
             {navItems.map((item, i) => (
               <div key={`${currentSite}-${item.id}`} className="relative group/nav">
                 <motion.a
@@ -250,7 +234,7 @@ export default function Navbar() {
                   whileHover={{ scale: 1.05, y: -2 }}
                   transition={{ delay: i * 0.05, type: "spring", stiffness: 300 }}
                   className={cn(
-                    "text-[11px] lg:text-sm font-medium transition-all relative group px-1.5 lg:px-3 py-2 whitespace-nowrap text-center flex items-center gap-1",
+                    "text-[10px] lg:text-xs xl:text-sm font-medium transition-all relative group px-2 lg:px-2.5 xl:px-3 py-2 whitespace-nowrap text-center flex items-center gap-1",
                     activeItem === item.id 
                       ? "text-[#1877f2]" 
                       : "text-gray-700 hover:text-[#1877f2]"
@@ -265,12 +249,12 @@ export default function Navbar() {
                 </motion.a>
 
                 {'dropdown' in item && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-3 px-2 opacity-0 translate-y-2 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto transition-all z-50">
+                  <div className="absolute top-full left-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 px-2 opacity-0 translate-y-2 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto transition-all z-50">
                     {item.dropdown?.map((sub, idx) => (
                       <a
                         key={idx}
                         href={sub.href}
-                        className="block w-full px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-700 hover:bg-blue-50 hover:text-[#1877f2]"
+                        className="block w-full px-3 py-2 rounded-xl text-xs font-bold transition-all text-gray-700 hover:bg-blue-50 hover:text-[#1877f2]"
                       >
                         {sub.name}
                       </a>
@@ -282,40 +266,33 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-2 lg:gap-3 shrink-0">
+        <div className="hidden md:flex items-center gap-1 lg:gap-2 shrink-0">
           <div className="h-6 w-px bg-gray-200 mx-1" />
 
-          {/* Live Indicator */}
-          <div className="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-red-50 border border-red-200 rounded-lg">
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-xs font-bold text-red-600 uppercase tracking-wider">Live</span>
+            <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider">Live</span>
           </div>
 
-          {/* Search Button */}
-          <button className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm bg-gray-100 text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-[#1877f2] hover:border-blue-200">
+          <button onClick={() => setIsSearchOpen(true)} className="w-9 h-9 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm bg-gray-100 text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-[#1877f2] hover:border-blue-200">
             <Search size={16} />
           </button>
 
-          {/* Notifications */}
-          <button className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm bg-gray-100 text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-[#1877f2] hover:border-blue-200 relative">
-            <Bell size={16} />
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-white text-[8px] font-bold flex items-center justify-center">3</div>
-          </button>
 
-          {/* Language Selector */}
+
           <div className="relative">
             <button 
               onClick={() => setLangOpen(!langOpen)}
               className={cn(
-                "flex items-center justify-center gap-2 text-xs lg:text-sm font-bold transition-all px-3 py-2 rounded-xl shadow-sm ring-1",
+                "flex items-center justify-center gap-1.5 text-xs font-bold transition-all px-3 py-2 rounded-lg shadow-sm ring-1",
                 langOpen 
                   ? "bg-[#1877f2] text-white ring-blue-500" 
                   : "bg-white text-gray-700 ring-gray-200 hover:ring-blue-500"
               )}
             >
-              <Languages size={16} className={cn("shrink-0", langOpen ? "animate-pulse" : "")} />
+              <Languages size={14} className={cn("shrink-0", langOpen ? "animate-pulse" : "")} />
               <span className="uppercase tracking-wider">{currentLang.code}</span>
-              <ChevronDown size={14} className={cn("transition-transform duration-300", langOpen ? "rotate-180" : "")} />
+              <ChevronDown size={12} className={cn("transition-transform duration-300", langOpen ? "rotate-180" : "")} />
             </button>
             
             <AnimatePresence>
@@ -363,32 +340,19 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          {/* Mute Toggle */}
-          <button
-            onClick={() => setIsMuted(!isMuted)}
-            className={cn(
-              "w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm",
-              isMuted 
-                ? "bg-gray-100 text-gray-400" 
-                : "bg-blue-50 text-[#1877f2]"
-            )}
-            title={isMuted ? t('unmuteVoice') : t('muteVoice')}
-          >
-            {isMuted ? <VolumeX size={16} className="lg:size-[18px]" /> : <Volume2 size={16} className="lg:size-[18px]" />}
-          </button>
 
-          {/* Church Quiz Button */}
+
           <button
             onClick={() => setIsQuizOpen(true)}
             className={cn(
-              "w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm relative",
+              "w-9 h-9 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm relative",
               quizScore !== null && quizScore >= 3
                 ? "bg-blue-50 text-[#1877f2] ring-1 ring-blue-500/30"
                 : "bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-blue-500"
             )}
             title={t('churchKnowledgeQuiz')}
           >
-            <HelpCircle size={16} className="lg:size-[18px]" />
+            <HelpCircle size={16} />
             {quizScore !== null && (
               <div className="absolute -top-1 -right-1 w-4 h-4 text-white text-[8px] font-bold rounded-full flex items-center justify-center border-2 border-white bg-[#1877f2]">
                 {quizScore}
@@ -396,49 +360,32 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* User Registration/Profile */}
-          <div className="flex items-center gap-2 lg:gap-3">
-            {user ? (
-              <div 
-                onClick={() => setIsWordDashboardOpen(true)}
-                className="flex items-center gap-1.5 lg:gap-2 px-2 lg:px-3 py-1.5 rounded-lg border group relative cursor-pointer min-w-[100px] lg:min-w-[120px] justify-center hover:shadow-lg transition-all bg-blue-50 border-blue-200 hover:border-blue-400"
-              >
-                <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-full flex items-center justify-center text-[9px] lg:text-[10px] text-white font-bold shrink-0 relative bg-[#1877f2]">
-                  {user.isFamily ? <Users size={10} className="lg:size-[12px]" /> : user.name.charAt(0)}
-                  {quizScore !== null && quizScore >= 3 && (
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-white flex items-center justify-center">
-                      <CheckCircle2 size={8} className="text-white" />
-                    </div>
-                  )}
-                </div>
-                <span className="text-xs lg:text-sm font-bold truncate max-w-[60px] lg:max-w-[80px] text-[#1877f2]">{user.name}</span>
-              </div>
-            ) : (
-              <button 
-                onClick={() => setIsRegModalOpen(true)}
-                className="flex items-center justify-center gap-1.5 lg:gap-2 text-xs lg:text-sm font-medium transition-colors bg-gray-100 px-2 lg:px-3 py-1.5 rounded-lg min-w-[100px] lg:min-w-[120px] text-gray-700 hover:text-[#1877f2] hover:bg-blue-50"
-              >
-                <User size={14} className="shrink-0 lg:size-[16px]" />
-                <span className="truncate">{t('register')}</span>
-              </button>
-            )}
+          <div className="flex items-center gap-2">
+            <a
+              href="/admin"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 text-white text-xs font-bold hover:shadow-lg transition-all"
+            >
+              <Lock size={14} />
+              <span>Admin</span>
+            </a>
+            <a
+              href="/join"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-green-600 to-green-700 text-white text-xs font-bold hover:shadow-lg transition-all"
+            >
+              <Users size={14} />
+              <span>Join Church</span>
+            </a>
+            <a
+              href="/login"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold hover:shadow-lg transition-all"
+            >
+              <User size={14} />
+              <span>Login</span>
+            </a>
           </div>
-
-          <motion.button
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.05, boxShadow: "0 10px 15px -3px rgb(24 119 242 / 0.2)" }}
-            whileTap={{ scale: 0.95 }}
-            className="text-white px-3 lg:px-5 py-1.5 lg:py-2 rounded-full text-xs lg:text-sm font-semibold transition-all shadow-md min-w-[60px] lg:min-w-[80px] text-center bg-[#1877f2] hover:bg-blue-600"
-          >
-            {t('give')}
-          </motion.button>
         </div>
-
-        {/* Mobile Toggle - Removed */}
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -501,15 +448,6 @@ export default function Navbar() {
                 <HelpCircle size={18} />
                 {t('churchKnowledgeQuiz')}
               </button>
-              <button 
-                onClick={() => {
-                  setIsOpen(false);
-                  setIsRegModalOpen(true);
-                }}
-                className="w-full text-white py-3 rounded-xl font-semibold mt-2 bg-[#1877f2]"
-              >
-                {user ? user.name : t('register')}
-              </button>
             </div>
           </motion.div>
         )}
@@ -519,11 +457,7 @@ export default function Navbar() {
         {isWordDashboardOpen && <WordDashboard onClose={() => setIsWordDashboardOpen(false)} />}
       </AnimatePresence>
 
-      <RegistrationModal 
-        isOpen={isRegModalOpen} 
-        onClose={() => setIsRegModalOpen(false)} 
-        onRegister={(data) => setUser(data)}
-      />
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       <ChurchQuiz 
         isOpen={isQuizOpen}

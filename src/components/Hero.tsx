@@ -4,34 +4,25 @@ import { ArrowRight, Play, Volume2, Calendar, MapPin, Users, Heart, ChevronLeft,
 import { useTranslation } from '../context/LanguageContext';
 import { useSite } from '../context/SiteContext';
 import { Book, Sparkles } from 'lucide-react';
+import { api } from '../lib/api';
 
 export default function Hero() {
   const { t, language } = useTranslation();
   const { isWordLight } = useSite();
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  const slides = [
+  const [slides, setSlides] = useState([
     {
-      image: '/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka.webp',
+      image_url: '/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka.webp',
       title: t('heroTitle'),
       subtitle: t('heroSub')
-    },
-    {
-      image: '/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(1).webp',
-      title: 'Worship Together',
-      subtitle: 'Experience God\'s presence'
-    },
-    {
-      image: '/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(2).webp',
-      title: 'Community & Fellowship',
-      subtitle: 'Connect with believers'
-    },
-    {
-      image: '/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(3).webp',
-      title: 'Youth Ministry',
-      subtitle: 'Building the next generation'
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    api.getHeroSlides().then(data => {
+      if (data.length > 0) setSlides(data);
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -167,7 +158,7 @@ export default function Hero() {
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentSlide}
-                  src={slides[currentSlide].image}
+                  src={slides[currentSlide].image_url || slides[currentSlide].image}
                   alt={slides[currentSlide].title}
                   initial={{ opacity: 0, x: 100 }}
                   animate={{ opacity: 1, x: 0 }}

@@ -1,17 +1,25 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageCircle, X, Send, Loader2, User, Bot, Sparkles } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+import { MessageCircle, X, Send, User, Bot } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useSite } from '../context/SiteContext';
-
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 interface Message {
   role: 'user' | 'bot';
   text: string;
   timestamp: Date;
 }
+
+const predefinedResponses: Record<string, string> = {
+  'hello': 'Hello! Welcome to CityLight Church. How can I help you today?',
+  'hi': 'Hi there! How can I assist you?',
+  'service': 'Our services are: Sunday 8:00 AM, 10:00 AM, 5:00 PM | Wednesday 7:00 PM | Friday 6:30 PM',
+  'location': 'We are located in Kigali, Rwanda. Visit our Branches section for more details.',
+  'contact': 'You can reach us at +250 788 123 456 or email citylight@foursquare.rw',
+  'prayer': 'We would be honored to pray with you. Please share your prayer request with our prayer team.',
+  'events': 'Check our Events section for upcoming church activities and programs.',
+  'default': 'Thank you for your message. For specific inquiries, please contact us at +250 788 123 456 or visit our church office.'
+};
 
 export default function Chatbot() {
   const { isWordLight } = useSite();
@@ -24,7 +32,6 @@ export default function Chatbot() {
       timestamp: new Date() 
     }
   ]);
-  const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,47 +40,34 @@ export default function Chatbot() {
     }
   }, [messages]);
 
+  const getResponse = (userInput: string): string => {
+    const input = userInput.toLowerCase();
+    for (const [key, response] of Object.entries(predefinedResponses)) {
+      if (input.includes(key)) {
+        return response;
+      }
+    }
+    return predefinedResponses.default;
+  };
+
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || loading) return;
+    if (!input.trim()) return;
 
     const userMessage: Message = { role: 'user', text: input, timestamp: new Date() };
     setMessages(prev => [...prev, userMessage]);
+    
+    const response = getResponse(input);
     setInput('');
-    setLoading(true);
 
-    try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `You are a spiritual and welcoming assistant for CityLight Church of Rwanda, deeply rooted in the Word of God. 
-        Your primary goal is to provide biblical guidance, share relevant Bible verses, and offer spiritual support alongside church information.
-        
-        Key Information:
-        - Church established in 2005 by Rev. Roger Brubeck.
-        - Branch of the International Church of the Foursquare Gospel (ICFG).
-        - Active in community outreach, education (nursery/primary schools), and various ministries (Children, Youth, Evangelism, Mercy, etc.).
-        
-        Guidelines:
-        - Always try to include a relevant Bible verse (NIV or ESV) when appropriate to the user's query.
-        - Be kind, encouraging, and prayerful in your tone.
-        - If someone asks for prayer, offer a short, sincere prayer.
-        - Focus on the "Word of God" as the foundation of your answers.
-        
-        User says: "${input}"`,
-      });
-
+    setTimeout(() => {
       const botMessage: Message = { 
         role: 'bot', 
-        text: response.text || "I'm sorry, I couldn't process that. How else can I help?", 
+        text: response, 
         timestamp: new Date() 
       };
       setMessages(prev => [...prev, botMessage]);
-    } catch (error) {
-      console.error("Chatbot Error:", error);
-      setMessages(prev => [...prev, { role: 'bot', text: "I'm having a bit of trouble connecting right now. Please try again later.", timestamp: new Date() }]);
-    } finally {
-      setLoading(false);
-    }
+    }, 500);
   };
 
   return (
@@ -135,16 +129,6 @@ export default function Chatbot() {
                   </div>
                 </motion.div>
               ))}
-              {loading && (
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center shrink-0">
-                    <Bot size={16} className="text-gray-600" />
-                  </div>
-                  <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
-                    <Loader2 size={16} className="animate-spin text-slate-400" />
-                  </div>
-                </div>
-              )}
               <div ref={scrollRef} />
             </div>
 
@@ -159,7 +143,7 @@ export default function Chatbot() {
               />
               <button
                 type="submit"
-                disabled={!input.trim() || loading}
+                disabled={!input.trim()}
                 className="w-12 h-12 rounded-xl bg-[#1877f2] hover:bg-blue-600 flex items-center justify-center text-white transition-all disabled:opacity-50"
               >
                 <Send size={20} />

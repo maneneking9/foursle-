@@ -16,11 +16,57 @@ import Chatbot from './components/Chatbot';
 import TheologicalTools from './components/TheologicalTools';
 import Footer from './components/Footer';
 import MobileBottomNav from './components/MobileBottomNav';
+import AdminDashboard from './components/AdminDashboard';
+import UserDashboard from './components/UserDashboard';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
+import MemberRegistrationPage from './components/MemberRegistrationPage';
 import { useSite } from './context/SiteContext';
 import { cn } from './lib/utils';
+import { useState, useEffect } from 'react';
 
 export default function App() {
   const { isWordLight } = useSite();
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
+  useEffect(() => {
+    const user = localStorage.getItem('admin_user');
+    
+    if (currentPath === '/admin') {
+      if (!user) {
+        window.location.href = '/login';
+        return;
+      }
+      const userData = JSON.parse(user);
+      if (userData.role !== 'admin') {
+        alert('Access denied. Admin only.');
+        window.location.href = '/';
+        return;
+      }
+    }
+
+    if (currentPath === '/dashboard') {
+      if (!user) {
+        window.location.href = '/login';
+        return;
+      }
+    }
+  }, [currentPath]);
+
+  if (currentPath === '/login') return <LoginPage />;
+  if (currentPath === '/register') return <RegisterPage />;
+  if (currentPath === '/join') return <MemberRegistrationPage />;
+  if (currentPath === '/dashboard') return <UserDashboard />;
+  if (currentPath === '/admin') return <AdminDashboard />;
 
   return (
     <div 
@@ -31,9 +77,9 @@ export default function App() {
           : "selection:bg-emerald-100 selection:text-emerald-900 site-citylight"
       )}
     >
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-4 px-4">
-        <h1 className="text-2xl font-bold">Grace Community Church</h1>
-        <p className="text-sm">Welcome to our website!</p>
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-3 md:py-4 px-4">
+        <h1 className="text-xl md:text-2xl font-bold">Grace Community Church</h1>
+        <p className="text-xs md:text-sm mt-1">Welcome to our website!</p>
       </div>
       <Navbar />
       <main>
