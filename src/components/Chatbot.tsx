@@ -5,7 +5,7 @@ import { GoogleGenAI } from "@google/genai";
 import { cn } from '../lib/utils';
 import { useSite } from '../context/SiteContext';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 interface Message {
   role: 'user' | 'bot';
@@ -84,13 +84,10 @@ export default function Chatbot() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="absolute bottom-20 right-0 w-[350px] sm:w-[400px] h-[500px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col overflow-hidden"
+            className="absolute bottom-20 right-0 w-[350px] sm:w-[400px] h-[500px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className={cn(
-              "p-6 text-white flex items-center justify-between",
-              isWordLight ? "bg-purple-600" : "bg-emerald-600"
-            )}>
+            <div className="p-6 bg-[#1877f2] text-white flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
                   <Bot size={24} />
@@ -109,7 +106,7 @@ export default function Chatbot() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 dark:bg-slate-950/50">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
               {messages.map((msg, i) => (
                 <motion.div
                   key={i}
@@ -123,16 +120,16 @@ export default function Chatbot() {
                   <div className={cn(
                     "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
                     msg.role === 'user' 
-                      ? (isWordLight ? "bg-purple-100 text-purple-600" : "bg-emerald-100 text-emerald-600")
-                      : "bg-slate-200 dark:bg-slate-800 text-slate-500"
+                      ? "bg-blue-100 text-blue-600"
+                      : "bg-gray-200 text-gray-600"
                   )}>
                     {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                   </div>
                   <div className={cn(
                     "max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed",
                     msg.role === 'user'
-                      ? (isWordLight ? "bg-purple-600 text-white" : "bg-emerald-600 text-white")
-                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm border border-slate-100 dark:border-slate-700"
+                      ? "bg-[#1877f2] text-white"
+                      : "bg-white text-gray-700 shadow-sm border border-gray-200"
                   )}>
                     {msg.text}
                   </div>
@@ -140,10 +137,10 @@ export default function Chatbot() {
               ))}
               {loading && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                    <Bot size={16} className="text-slate-500" />
+                  <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center shrink-0">
+                    <Bot size={16} className="text-gray-600" />
                   </div>
-                  <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                  <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
                     <Loader2 size={16} className="animate-spin text-slate-400" />
                   </div>
                 </div>
@@ -152,21 +149,18 @@ export default function Chatbot() {
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSend} className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+            <form onSubmit={handleSend} className="p-4 bg-white border-t border-gray-200 flex gap-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask me anything..."
-                className="flex-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                className="flex-1 bg-gray-100 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 text-gray-900"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
-                className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all disabled:opacity-50",
-                  isWordLight ? "bg-purple-600 hover:bg-purple-700" : "bg-emerald-600 hover:bg-emerald-700"
-                )}
+                className="w-12 h-12 rounded-xl bg-[#1877f2] hover:bg-blue-600 flex items-center justify-center text-white transition-all disabled:opacity-50"
               >
                 <Send size={20} />
               </button>
@@ -179,14 +173,11 @@ export default function Chatbot() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-2xl transition-all",
-          isWordLight ? "bg-purple-600 shadow-purple-600/30" : "bg-emerald-600 shadow-emerald-600/30"
-        )}
+        className="w-16 h-16 rounded-2xl bg-[#1877f2] hover:bg-blue-600 flex items-center justify-center text-white shadow-2xl shadow-blue-600/30 transition-all"
       >
         {isOpen ? <X size={32} /> : <MessageCircle size={32} />}
         {!isOpen && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900" />
+          <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white" />
         )}
       </motion.button>
     </div>

@@ -74,7 +74,7 @@ export default function Services() {
   const services = isWordLight ? [...wordLightServices, ...cityLightServices] : cityLightServices;
 
   return (
-    <section id="services" className={cn("py-24 transition-all duration-700 relative overflow-hidden", isWordLight ? "bg-white dark:bg-slate-900" : "bg-slate-50 dark:bg-slate-900/50")}>
+    <section id="services" className="py-24 transition-all duration-700 relative overflow-hidden bg-white">
       {isWordLight && (
         <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05] -z-10" 
              style={{ backgroundImage: 'radial-gradient(#9333ea 0.5px, transparent 0.5px)', backgroundSize: '30px 30px' }} />
@@ -85,7 +85,7 @@ export default function Services() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl font-bold text-slate-900 dark:text-white mb-4"
+            className="text-4xl font-bold text-gray-900 mb-4"
           >
             {isWordLight ? t('studySessions') : t('ourServices')}
           </motion.h2>
@@ -94,7 +94,7 @@ export default function Services() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto"
+            className="text-gray-600 max-w-2xl mx-auto"
           >
             {isWordLight ? t('studySessionsSub') : t('servicesSub')}
           </motion.p>
@@ -108,12 +108,7 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className={cn(
-                "p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all border group cursor-pointer relative overflow-hidden",
-                isWordLight 
-                  ? "bg-slate-50 border-slate-100 hover:border-purple-500" 
-                  : "bg-white border-slate-100 hover:border-emerald-500"
-              )}
+              className="p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all border group cursor-pointer relative overflow-hidden bg-white border-gray-100 hover:border-blue-400"
             >
               <div className={cn(
                 "w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform",
@@ -121,20 +116,17 @@ export default function Services() {
               )}>
                 <service.icon size={28} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">{service.title}</h3>
-              <p className={cn("font-semibold text-sm mb-4", isWordLight ? "text-purple-600" : "text-emerald-600")}>{service.time}</p>
-              <p className="text-slate-500 text-sm leading-relaxed mb-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
+              <p className="font-semibold text-sm mb-4 text-[#1877f2]">{service.time}</p>
+              <p className="text-gray-500 text-sm leading-relaxed mb-6">
                 {service.description}
               </p>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-emerald-600 transition-colors">
+              <div className="flex items-center gap-2 text-xs font-bold text-gray-400 group-hover:text-blue-600 transition-colors">
                 {t('learnMore')} <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </div>
               
               {/* Decorative background element */}
-              <div className={cn(
-                "absolute -right-4 -bottom-4 w-24 h-24 rounded-full opacity-0 group-hover:opacity-10 transition-opacity",
-                isWordLight ? "bg-purple-600" : "bg-emerald-600"
-              )} />
+              <div className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full opacity-0 group-hover:opacity-10 transition-opacity bg-[#1877f2]" />
             </motion.div>
           ))}
         </div>
@@ -152,10 +144,7 @@ export default function Services() {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className={cn(
-            "rounded-[3rem] p-10 md:p-16 text-white text-center relative overflow-hidden mb-20",
-            isWordLight ? "bg-purple-600" : "bg-emerald-600"
-          )}
+          className="rounded-[3rem] p-10 md:p-16 text-white text-center relative overflow-hidden mb-20 bg-[#1877f2]"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
           <div className="relative z-10 max-w-3xl mx-auto">
@@ -169,16 +158,10 @@ export default function Services() {
               }
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button className={cn(
-                "px-8 py-4 rounded-2xl font-bold transition-all shadow-lg",
-                isWordLight ? "bg-white text-purple-600 hover:bg-purple-50" : "bg-white text-emerald-600 hover:bg-emerald-50"
-              )}>
+              <button className="px-8 py-4 rounded-2xl font-bold transition-all shadow-lg bg-white text-[#1877f2] hover:bg-blue-50">
                 {isWordLight ? t('enrollInSession') : t('planYourVisit')}
               </button>
-              <button className={cn(
-                "backdrop-blur-sm border px-8 py-4 rounded-2xl font-bold transition-all",
-                isWordLight ? "bg-purple-700/50 border-purple-400/30 text-white hover:bg-purple-700" : "bg-emerald-700/50 border-emerald-400/30 text-white hover:bg-emerald-700"
-              )}>
+              <button className="backdrop-blur-sm border px-8 py-4 rounded-2xl font-bold transition-all bg-blue-700/50 border-blue-400/30 text-white hover:bg-blue-700">
                 {isWordLight ? t('viewCurriculum') : t('watchPastServices')}
               </button>
             </div>
@@ -193,14 +176,14 @@ export default function Services() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-3xl font-bold text-slate-900 mb-6">{t('ourSchools')}</h3>
-              <p className="text-slate-600 mb-6 leading-relaxed">
+              <h3 className="text-3xl font-bold text-gray-900 mb-6">{t('ourSchools')}</h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
                 {t('ourSchoolsSub')}
               </p>
               <ul className="space-y-4">
                 {["Quality Education", "Christian Values", "Community Focus", "Holistic Development"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-slate-700 font-medium">
-                    <div className={cn("w-2 h-2 rounded-full", isWordLight ? "bg-purple-500" : "bg-emerald-500")} />
+                  <li key={i} className="flex items-center gap-3 text-gray-700 font-medium">
+                    <div className="w-2 h-2 rounded-full bg-blue-500" />
                     {item}
                   </li>
                 ))}
@@ -210,14 +193,12 @@ export default function Services() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative rounded-[3rem] overflow-hidden shadow-xl bg-slate-100"
+              className="relative rounded-[3rem] overflow-hidden shadow-xl bg-white"
             >
               <img 
-                src="https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_5.png" 
+                src="/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(5).webp" 
                 alt="Our School" 
                 className="w-full h-auto block"
-                referrerPolicy="no-referrer"
-                style={{ imageRendering: 'auto' }}
               />
             </motion.div>
           </div>
@@ -232,18 +213,18 @@ export default function Services() {
               viewport={{ once: true }}
               className="lg:order-2"
             >
-              <h3 className="text-3xl font-bold text-slate-900 mb-6">{t('ourMinistry')}</h3>
-              <p className="text-slate-600 mb-6 leading-relaxed">
+              <h3 className="text-3xl font-bold text-gray-900 mb-6">{t('ourMinistry')}</h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
                 {t('ourMinistrySub')}
               </p>
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                  <h4 className={cn("font-bold mb-1", isWordLight ? "text-purple-600" : "text-emerald-600")}>{t('leadership')}</h4>
-                  <p className="text-xs text-slate-500">{t('leadershipSub')}</p>
+                <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                  <h4 className="font-bold mb-1 text-[#1877f2]">{t('leadership')}</h4>
+                  <p className="text-xs text-gray-500">{t('leadershipSub')}</p>
                 </div>
-                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                  <h4 className={cn("font-bold mb-1", isWordLight ? "text-purple-600" : "text-emerald-600")}>{t('development')}</h4>
-                  <p className="text-xs text-slate-500">{t('developmentSub')}</p>
+                <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                  <h4 className="font-bold mb-1 text-[#1877f2]">{t('development')}</h4>
+                  <p className="text-xs text-gray-500">{t('developmentSub')}</p>
                 </div>
               </div>
             </motion.div>
@@ -251,14 +232,12 @@ export default function Services() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative rounded-[3rem] overflow-hidden shadow-xl bg-slate-100 lg:order-1"
+              className="relative rounded-[3rem] overflow-hidden shadow-xl bg-white lg:order-1"
             >
               <img 
-                src="https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_7.png" 
+                src="/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(7).webp" 
                 alt="Our Ministry" 
                 className="w-full h-auto block"
-                referrerPolicy="no-referrer"
-                style={{ imageRendering: 'auto' }}
               />
             </motion.div>
           </div>

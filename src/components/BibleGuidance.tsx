@@ -5,7 +5,10 @@ import { GoogleGenAI } from "@google/genai";
 import { cn } from '../lib/utils';
 import { useSite } from '../context/SiteContext';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let ai: GoogleGenAI | null = null;
+if (import.meta.env.VITE_GEMINI_API_KEY) {
+  ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+}
 
 export default function BibleGuidance() {
   const { isWordLight } = useSite();
@@ -22,7 +25,7 @@ export default function BibleGuidance() {
   // Debounced suggestions as user types
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (query.length > 3 && !loading) {
+      if (query.length > 3 && !loading && ai) {
         try {
           const response = await ai.models.generateContent({
             model: "gemini-3-flash-preview",
@@ -49,7 +52,7 @@ export default function BibleGuidance() {
   const handleSearch = async (e: React.FormEvent | string) => {
     if (typeof e !== 'string') e.preventDefault();
     const searchQuery = typeof e === 'string' ? e : query;
-    if (!searchQuery.trim() || loading) return;
+    if (!searchQuery.trim() || loading || !ai) return;
 
     if (typeof e === 'string') setQuery(e);
 

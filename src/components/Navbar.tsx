@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Church, Home, Calendar, BookOpen, Info, Radio, Map, Image as ImageIcon, Languages, ChevronDown, Heart, Book, Sun, Moon, User, Users, Sparkles, HelpCircle, CheckCircle2, Volume2, VolumeX, History as HistoryIcon, Star } from 'lucide-react';
+import { Menu, X, Church, Home, Calendar, BookOpen, Info, Radio, Map, Image as ImageIcon, Languages, ChevronDown, Heart, Book, Sun, Moon, User, Users, Sparkles, HelpCircle, CheckCircle2, Volume2, VolumeX, History as HistoryIcon, Star, Search, Bell } from 'lucide-react';
 import { cn } from '../lib/utils';
 import RegistrationModal from './RegistrationModal';
 import ChurchQuiz from './ChurchQuiz';
@@ -47,7 +47,6 @@ export default function Navbar() {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    // Also listen for custom events if we trigger them manually
     window.addEventListener('user_data_updated', handleStorageChange);
     
     return () => {
@@ -180,10 +179,8 @@ export default function Navbar() {
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4',
         scrolled 
-          ? (isWordLight 
-              ? 'bg-purple-50/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm py-3 border-b border-purple-100/50 dark:border-slate-800' 
-              : 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm py-3 border-b border-slate-100 dark:border-slate-800') 
-          : 'bg-transparent'
+          ? 'bg-white/95 backdrop-blur-md shadow-lg py-3 border-b border-blue-100' 
+          : 'bg-white/80 backdrop-blur-sm'
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -196,20 +193,16 @@ export default function Navbar() {
         >
           <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center bg-transparent transition-transform group-hover:scale-110">
             <img 
-              src={isWordLight ? "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=100&auto=format&fit=crop" : "https://storage.googleapis.com/aistudio-dev-tools-public/user_uploads/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/step_90_image.png"} 
-              alt="Logo" 
-              className="w-full h-full object-contain scale-110"
-              referrerPolicy="no-referrer"
+              src="/app logo/download (10).jpg" 
+              alt="Church Logo" 
+              className="w-full h-full object-cover"
             />
           </div>
           <div className="flex flex-col">
-            <span className={cn(
-              "text-sm lg:text-base font-bold tracking-tight whitespace-nowrap uppercase transition-colors",
-              isWordLight ? "text-purple-600" : "text-emerald-600"
-            )}>
+            <span className="text-sm lg:text-base font-bold tracking-tight whitespace-nowrap uppercase transition-colors text-[#1877f2]">
               {isWordLight ? "Word Light" : "Foursquare"}
             </span>
-            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">
+            <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">
               {isWordLight ? "Biblical Excellence" : "CityLight Church"}
             </span>
           </div>
@@ -230,29 +223,25 @@ export default function Navbar() {
                   className={cn(
                     "text-[11px] lg:text-sm font-medium transition-all relative group px-1.5 lg:px-3 py-2 whitespace-nowrap text-center flex items-center gap-1",
                     activeItem === item.id 
-                      ? (isWordLight ? "text-purple-600" : "text-emerald-600") 
-                      : (isWordLight ? "text-slate-600 hover:text-purple-600" : "text-slate-600 hover:text-emerald-600")
+                      ? "text-[#1877f2]" 
+                      : "text-gray-700 hover:text-[#1877f2]"
                   )}
                 >
                   <span className="relative z-10">{item.name}</span>
                   {'dropdown' in item && <ChevronDown size={12} className="group-hover/nav:rotate-180 transition-transform" />}
                   <span className={cn(
-                    "absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 transition-all",
-                    isWordLight ? "bg-purple-600" : "bg-emerald-600",
+                    "absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 transition-all bg-[#1877f2]",
                     activeItem === item.id ? "w-1/2" : "w-0 group-hover:w-1/2"
                   )} />
                 </motion.a>
 
                 {'dropdown' in item && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl py-3 px-2 opacity-0 translate-y-2 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto transition-all z-50">
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-3 px-2 opacity-0 translate-y-2 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto transition-all z-50">
                     {item.dropdown?.map((sub, idx) => (
                       <a
                         key={idx}
                         href={sub.href}
-                        className={cn(
-                          "block w-full px-4 py-2.5 rounded-xl text-xs font-bold transition-all",
-                          isWordLight ? "text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400" : "text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 dark:hover:text-emerald-400"
-                        )}
+                        className="block w-full px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-700 hover:bg-blue-50 hover:text-[#1877f2]"
                       >
                         {sub.name}
                       </a>
@@ -265,20 +254,23 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-2 lg:gap-3 shrink-0">
-          <div className="h-6 w-px bg-slate-200 mx-1" />
+          <div className="h-6 w-px bg-gray-200 mx-1" />
 
-          {/* Theme Toggle */}
-          <button
-            onClick={() => setIsDark(!isDark)}
-            className={cn(
-              "w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm",
-              isDark 
-                ? "bg-slate-800 text-amber-400 border border-slate-700" 
-                : "bg-slate-100 text-slate-600 border border-slate-200"
-            )}
-            title={isDark ? t('lightMode') : t('darkMode')}
-          >
-            {isDark ? <Sun size={16} className="lg:size-[18px]" /> : <Moon size={16} className="lg:size-[18px]" />}
+          {/* Live Indicator */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <span className="text-xs font-bold text-red-600 uppercase tracking-wider">Live</span>
+          </div>
+
+          {/* Search Button */}
+          <button className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm bg-gray-100 text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-[#1877f2] hover:border-blue-200">
+            <Search size={16} />
+          </button>
+
+          {/* Notifications */}
+          <button className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm bg-gray-100 text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-[#1877f2] hover:border-blue-200 relative">
+            <Bell size={16} />
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-white text-[8px] font-bold flex items-center justify-center">3</div>
           </button>
 
           {/* Language Selector */}
@@ -288,11 +280,8 @@ export default function Navbar() {
               className={cn(
                 "flex items-center justify-center gap-2 text-xs lg:text-sm font-bold transition-all px-3 py-2 rounded-xl shadow-sm ring-1",
                 langOpen 
-                  ? (isWordLight ? "bg-purple-600 text-white ring-purple-500" : "bg-emerald-600 text-white ring-emerald-500") 
-                  : cn(
-                      "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 ring-slate-200 dark:ring-slate-800",
-                      isWordLight ? "hover:ring-purple-500" : "hover:ring-emerald-500"
-                    )
+                  ? "bg-[#1877f2] text-white ring-blue-500" 
+                  : "bg-white text-gray-700 ring-gray-200 hover:ring-blue-500"
               )}
             >
               <Languages size={16} className={cn("shrink-0", langOpen ? "animate-pulse" : "")} />
@@ -306,10 +295,10 @@ export default function Navbar() {
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-3 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-2xl py-3 z-50 overflow-hidden transition-colors duration-300"
+                  className="absolute right-0 mt-3 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-3 z-50 overflow-hidden"
                 >
-                  <div className="px-4 py-2 mb-2 border-b border-slate-50 dark:border-slate-800">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('selectLanguage')}</span>
+                  <div className="px-4 py-2 mb-2 border-b border-gray-100">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('selectLanguage')}</span>
                   </div>
                   {languages.map((lang) => (
                     <button
@@ -317,7 +306,6 @@ export default function Navbar() {
                       onClick={() => {
                         setLanguage(lang.code);
                         setLangOpen(false);
-                        // Advanced feature: Voice feedback
                         if (!isMuted) {
                           const utterance = new SpeechSynthesisUtterance(lang.name);
                           utterance.lang = lang.code === 'KIN' ? 'rw-RW' : lang.code === 'FR' ? 'fr-FR' : lang.code === 'KIS' ? 'sw-KE' : 'en-US';
@@ -327,16 +315,16 @@ export default function Navbar() {
                       className={cn(
                         "w-full text-left px-4 py-3 text-sm transition-all flex items-center justify-between group",
                         language === lang.code 
-                          ? (isWordLight ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 font-bold" : "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-bold") 
-                          : (isWordLight ? "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-purple-600 dark:hover:text-purple-400" : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-emerald-400")
+                          ? "bg-blue-50 text-[#1877f2] font-bold" 
+                          : "text-gray-700 hover:bg-gray-50 hover:text-[#1877f2]"
                       )}
                     >
                       <span>{lang.name}</span>
-                      {language === lang.code && <div className={cn("w-1.5 h-1.5 rounded-full", isWordLight ? "bg-purple-500 shadow-[0_0_8px_rgba(147,51,234,0.6)]" : "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]")} />}
+                      {language === lang.code && <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(24,119,242,0.6)]" />}
                     </button>
                   ))}
-                  <div className="mt-2 px-4 pt-2 border-t border-slate-50">
-                    <div className={cn("flex items-center gap-2 text-[10px] font-medium", isWordLight ? "text-purple-600" : "text-emerald-600")}>
+                  <div className="mt-2 px-4 pt-2 border-t border-gray-100">
+                    <div className="flex items-center gap-2 text-[10px] font-medium text-[#1877f2]">
                       <Sparkles size={10} />
                       <span>{t('aiPoweredTranslation')}</span>
                     </div>
@@ -352,8 +340,8 @@ export default function Navbar() {
             className={cn(
               "w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm",
               isMuted 
-                ? "bg-slate-100 dark:bg-slate-800 text-slate-400" 
-                : (isWordLight ? "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400" : "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400")
+                ? "bg-gray-100 text-gray-400" 
+                : "bg-blue-50 text-[#1877f2]"
             )}
             title={isMuted ? t('unmuteVoice') : t('muteVoice')}
           >
@@ -366,14 +354,14 @@ export default function Navbar() {
             className={cn(
               "w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg transition-all shrink-0 shadow-sm relative",
               quizScore !== null && quizScore >= 3
-                ? (isWordLight ? "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 ring-1 ring-purple-500/30" : "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/30")
-                : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 ring-1 ring-slate-200 dark:ring-slate-800 hover:ring-emerald-500"
+                ? "bg-blue-50 text-[#1877f2] ring-1 ring-blue-500/30"
+                : "bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-blue-500"
             )}
             title={t('churchKnowledgeQuiz')}
           >
             <HelpCircle size={16} className="lg:size-[18px]" />
             {quizScore !== null && (
-              <div className={cn("absolute -top-1 -right-1 w-4 h-4 text-white text-[8px] font-bold rounded-full flex items-center justify-center border-2 border-white", isWordLight ? "bg-purple-600" : "bg-emerald-600")}>
+              <div className="absolute -top-1 -right-1 w-4 h-4 text-white text-[8px] font-bold rounded-full flex items-center justify-center border-2 border-white bg-[#1877f2]">
                 {quizScore}
               </div>
             )}
@@ -384,14 +372,9 @@ export default function Navbar() {
             {user ? (
               <div 
                 onClick={() => setIsWordDashboardOpen(true)}
-                className={cn(
-                  "flex items-center gap-1.5 lg:gap-2 px-2 lg:px-3 py-1.5 rounded-lg border group relative cursor-pointer min-w-[100px] lg:min-w-[120px] justify-center hover:shadow-lg transition-all",
-                  isWordLight 
-                    ? "bg-purple-50 dark:bg-purple-900/20 border-purple-100 dark:border-purple-800 hover:border-purple-500" 
-                    : "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800 hover:border-emerald-500"
-                )}
+                className="flex items-center gap-1.5 lg:gap-2 px-2 lg:px-3 py-1.5 rounded-lg border group relative cursor-pointer min-w-[100px] lg:min-w-[120px] justify-center hover:shadow-lg transition-all bg-blue-50 border-blue-200 hover:border-blue-400"
               >
-                <div className={cn("w-5 h-5 lg:w-6 lg:h-6 rounded-full flex items-center justify-center text-[9px] lg:text-[10px] text-white font-bold shrink-0 relative", isWordLight ? "bg-purple-600" : "bg-emerald-600")}>
+                <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-full flex items-center justify-center text-[9px] lg:text-[10px] text-white font-bold shrink-0 relative bg-[#1877f2]">
                   {user.isFamily ? <Users size={10} className="lg:size-[12px]" /> : user.name.charAt(0)}
                   {quizScore !== null && quizScore >= 3 && (
                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-white flex items-center justify-center">
@@ -399,76 +382,12 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
-                <span className={cn("text-xs lg:text-sm font-bold truncate max-w-[60px] lg:max-w-[80px]", isWordLight ? "text-purple-700 dark:text-purple-300" : "text-emerald-700 dark:text-emerald-300")}>{user.name}</span>
-                
-                {user.isFamily && user.members && user.members.length > 0 && (
-                  <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-xl py-4 px-5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                    <div className="mb-4">
-                      <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-2 font-bold">{t('familyMembers')}</p>
-                      <ul className="space-y-1">
-                        {user.members.map((m, i) => (
-                          <li key={i} className="text-xs text-slate-600 dark:text-slate-300 font-medium flex items-center gap-2">
-                            <div className="w-1 h-1 bg-emerald-400 rounded-full" />
-                            {m}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-slate-400 uppercase font-bold tracking-wider">{t('status')}</span>
-                        <span className={cn("font-bold", isWordLight ? "text-purple-600 dark:text-purple-400" : "text-emerald-600 dark:text-emerald-400")}>{user.wantToBeChristian ? t('christianMember') : t('visitor')}</span>
-                      </div>
-                      {quizScore !== null && (
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-slate-400 uppercase font-bold tracking-wider">{t('heritageScore')}</span>
-                          <span className={cn("font-bold", quizScore >= 3 ? "text-blue-500" : "text-amber-500")}>{quizScore}/4</span>
-                        </div>
-                      )}
-                      {user.previousChurch && (
-                        <div className="flex flex-col text-[10px]">
-                          <span className="text-slate-400 uppercase font-bold tracking-wider mb-1">{t('from')}</span>
-                          <span className="text-slate-600 dark:text-slate-300 font-medium truncate">{user.previousChurch}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-                {!user.isFamily && (
-                  <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-xl py-4 px-5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-slate-400 uppercase font-bold tracking-wider">{t('status')}</span>
-                        <span className={cn("font-bold", isWordLight ? "text-purple-600 dark:text-purple-400" : "text-emerald-600 dark:text-emerald-400")}>{user.wantToBeChristian ? t('christianMember') : t('visitor')}</span>
-                      </div>
-                      {quizScore !== null && (
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-slate-400 uppercase font-bold tracking-wider">{t('heritageScore')}</span>
-                          <span className={cn("font-bold", quizScore >= 3 ? "text-blue-500" : "text-amber-500")}>{quizScore}/4</span>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-slate-400 uppercase font-bold tracking-wider">{t('visitedBefore')}</span>
-                        <span className="text-slate-600 dark:text-slate-300 font-bold">{user.hasVisited ? t('yes') : t('no')}</span>
-                      </div>
-                      {user.previousChurch && (
-                        <div className="flex flex-col text-[10px] pt-2 border-t border-slate-100 dark:border-slate-800">
-                          <span className="text-slate-400 uppercase font-bold tracking-wider mb-1">{t('fromChurch')}</span>
-                          <span className="text-slate-600 dark:text-slate-300 font-medium truncate">{user.previousChurch}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+                <span className="text-xs lg:text-sm font-bold truncate max-w-[60px] lg:max-w-[80px] text-[#1877f2]">{user.name}</span>
               </div>
             ) : (
               <button 
                 onClick={() => setIsRegModalOpen(true)}
-                className={cn(
-                  "flex items-center justify-center gap-1.5 lg:gap-2 text-xs lg:text-sm font-medium transition-colors bg-slate-100 px-2 lg:px-3 py-1.5 rounded-lg min-w-[100px] lg:min-w-[120px]",
-                  isWordLight ? "text-slate-600 hover:text-purple-600" : "text-slate-600 hover:text-emerald-600"
-                )}
+                className="flex items-center justify-center gap-1.5 lg:gap-2 text-xs lg:text-sm font-medium transition-colors bg-gray-100 px-2 lg:px-3 py-1.5 rounded-lg min-w-[100px] lg:min-w-[120px] text-gray-700 hover:text-[#1877f2] hover:bg-blue-50"
               >
                 <User size={14} className="shrink-0 lg:size-[16px]" />
                 <span className="truncate">{t('register')}</span>
@@ -479,12 +398,9 @@ export default function Navbar() {
           <motion.button
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.05, boxShadow: isWordLight ? "0 10px 15px -3px rgb(147 51 234 / 0.2)" : "0 10px 15px -3px rgb(16 185 129 / 0.2)" }}
+            whileHover={{ scale: 1.05, boxShadow: "0 10px 15px -3px rgb(24 119 242 / 0.2)" }}
             whileTap={{ scale: 0.95 }}
-            className={cn(
-              "text-white px-3 lg:px-5 py-1.5 lg:py-2 rounded-full text-xs lg:text-sm font-semibold transition-all shadow-md min-w-[60px] lg:min-w-[80px] text-center",
-              isWordLight ? "bg-purple-600 hover:bg-purple-700" : "bg-emerald-600 hover:bg-emerald-700"
-            )}
+            className="text-white px-3 lg:px-5 py-1.5 lg:py-2 rounded-full text-xs lg:text-sm font-semibold transition-all shadow-md min-w-[60px] lg:min-w-[80px] text-center bg-[#1877f2] hover:bg-blue-600"
           >
             {t('give')}
           </motion.button>
@@ -492,7 +408,7 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button 
-          className="md:hidden p-2 text-slate-600"
+          className="md:hidden p-2 text-gray-600"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -506,7 +422,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-slate-100 overflow-hidden"
+            className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
           >
             <div className="flex flex-col p-6 gap-4">
               {navItems.map((item) => (
@@ -522,8 +438,8 @@ export default function Navbar() {
                     className={cn(
                       "flex items-center justify-between font-medium transition-colors py-2",
                       activeItem === item.id 
-                        ? (isWordLight ? "text-purple-600" : "text-emerald-600") 
-                        : "text-slate-600 dark:text-slate-300 hover:text-emerald-600"
+                        ? "text-[#1877f2]" 
+                        : "text-gray-700 hover:text-[#1877f2]"
                     )}
                   >
                     <div className="flex items-center gap-3">
@@ -534,7 +450,7 @@ export default function Navbar() {
                   </a>
                   
                   {'dropdown' in item && (
-                    <div className="pl-8 flex flex-col gap-2 border-l border-slate-100 dark:border-slate-800 ml-2">
+                    <div className="pl-8 flex flex-col gap-2 border-l border-gray-100 ml-2">
                       {item.dropdown?.map((sub, idx) => (
                         <a
                           key={idx}
@@ -543,7 +459,7 @@ export default function Navbar() {
                             setIsOpen(false);
                             setActiveItem(item.id);
                           }}
-                          className="text-xs font-bold text-slate-500 dark:text-slate-400 py-1 hover:text-emerald-600 transition-colors"
+                          className="text-xs font-bold text-gray-500 py-1 hover:text-[#1877f2] transition-colors"
                         >
                           {sub.name}
                         </a>
@@ -552,67 +468,12 @@ export default function Navbar() {
                   )}
                 </div>
               ))}
-                {/* Mobile Theme Toggle */}
-                <button
-                  onClick={() => setIsDark(!isDark)}
-                  className={cn(
-                    "flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all border col-span-2",
-                    isDark 
-                      ? "bg-slate-800 text-amber-400 border-slate-700" 
-                      : "bg-slate-100 text-slate-600 border-slate-200"
-                  )}
-                >
-                  {isDark ? <Sun size={14} /> : <Moon size={14} />}
-                  {isDark ? t('lightMode') : t('darkMode')}
-                </button>
-
-                {/* Mobile Language Selector */}
-              <div className="grid grid-cols-2 gap-2">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => {
-                      setLanguage(lang.code);
-                      setIsOpen(false);
-                      if (!isMuted) {
-                        const utterance = new SpeechSynthesisUtterance(lang.name);
-                        utterance.lang = lang.code === 'KIN' ? 'rw-RW' : lang.code === 'FR' ? 'fr-FR' : lang.code === 'KIS' ? 'sw-KE' : 'en-US';
-                        window.speechSynthesis.speak(utterance);
-                      }
-                    }}
-                    className={cn(
-                      "flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all border",
-                      language === lang.code 
-                        ? (isWordLight ? "bg-purple-600 text-white border-purple-500" : "bg-emerald-600 text-white border-emerald-500") 
-                        : "bg-slate-50 text-slate-600 border-slate-100"
-                    )}
-                  >
-                    <Languages size={14} />
-                    {lang.name}
-                  </button>
-                ))}
-                
-                {/* Mobile Mute Toggle */}
-                <button
-                  onClick={() => setIsMuted(!isMuted)}
-                  className={cn(
-                    "flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all border col-span-2",
-                    isMuted 
-                      ? "bg-slate-100 text-slate-400 border-slate-200" 
-                      : (isWordLight ? "bg-purple-100 text-purple-600 border-purple-200" : "bg-emerald-100 text-emerald-600 border-emerald-200")
-                  )}
-                >
-                  {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                  {isMuted ? t('unmute') : t('mute')}
-                </button>
-              </div>
-
               <button 
                 onClick={() => {
                   setIsOpen(false);
                   setIsQuizOpen(true);
                 }}
-                className="w-full bg-slate-100 text-slate-900 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
+                className="w-full bg-gray-100 text-gray-900 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
               >
                 <HelpCircle size={18} />
                 {t('churchKnowledgeQuiz')}
@@ -622,10 +483,7 @@ export default function Navbar() {
                   setIsOpen(false);
                   setIsRegModalOpen(true);
                 }}
-                className={cn(
-                  "w-full text-white py-3 rounded-xl font-semibold mt-2",
-                  isWordLight ? "bg-purple-600" : "bg-emerald-600"
-                )}
+                className="w-full text-white py-3 rounded-xl font-semibold mt-2 bg-[#1877f2]"
               >
                 {user ? user.name : t('register')}
               </button>

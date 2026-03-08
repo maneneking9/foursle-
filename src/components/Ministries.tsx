@@ -14,7 +14,7 @@ export default function Ministries() {
       title: t('childrensMinistry'),
       description: "We have various programs for children (nursery, Sunday school, VBS, etc.) aimed at nurturing young hearts in the way of the Lord.",
       icon: Baby,
-      image: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_4.png",
+      image: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(4).webp",
       color: "bg-blue-500"
     },
     {
@@ -22,7 +22,7 @@ export default function Ministries() {
       title: t('youthMinistry'),
       description: "Rooted in faith and centered on Christ, the ministry provides a safe and nurturing space where youth can connect with one another and explore their relationship with God.",
       icon: Users,
-      image: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_7.png",
+      image: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(7).webp",
       color: "bg-purple-500"
     },
     {
@@ -30,7 +30,7 @@ export default function Ministries() {
       title: t('evangelismMinistry'),
       description: "Committed to spreading the Gospel message and sharing God’s love with the community through outreach, missions, and discipleship programs.",
       icon: Megaphone,
-      image: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_0.png",
+      image: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka.webp",
       color: "bg-emerald-500"
     },
     {
@@ -38,7 +38,7 @@ export default function Ministries() {
       title: t('eduLeadershipMinistry'),
       description: "Aimed at fostering spiritual growth, providing biblical teaching, discipleship, and leadership training to equip members with divine knowledge.",
       icon: GraduationCap,
-      image: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_5.png",
+      image: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(5).webp",
       color: "bg-amber-500"
     },
     {
@@ -46,7 +46,7 @@ export default function Ministries() {
       title: t('mercyMinistry'),
       description: "Reflecting God’s love and compassion, serving the physical, emotional, and financial needs of the less fortunate within the church and community.",
       icon: HeartHandshake,
-      image: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_1.png",
+      image: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(1).webp",
       color: "bg-rose-500"
     },
     {
@@ -54,7 +54,7 @@ export default function Ministries() {
       title: t('counselingMinistry'),
       description: "Offers compassionate, Christ-centered guidance and support to individuals, couples, and families facing personal, relational, or spiritual challenges.",
       icon: MessageSquare,
-      image: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_3.png",
+      image: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(3).webp",
       color: "bg-indigo-500"
     }
   ];
@@ -110,8 +110,6 @@ export default function Ministries() {
                   src={ministry.image} 
                   alt={ministry.title} 
                   className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
-                  referrerPolicy="no-referrer"
-                  style={{ imageRendering: 'auto' }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
                 <div className={cn(

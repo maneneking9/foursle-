@@ -92,10 +92,9 @@ export default function History() {
             className="relative rounded-[3rem] overflow-hidden shadow-2xl"
           >
             <img 
-              src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop" 
+              src="/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(2).webp" 
               alt="Church History" 
               className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
             />
             <div className={cn("absolute inset-0 opacity-20", isWordLight ? "bg-purple-600" : "bg-emerald-600")} />
           </motion.div>

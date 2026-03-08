@@ -16,7 +16,11 @@ export default function About() {
   const generateAISummary = async () => {
     setIsSummarizing(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      if (!import.meta.env.VITE_GEMINI_API_KEY) {
+        setSummary('API key not configured.');
+        return;
+      }
+      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: `Provide a very short (2 sentences) summary of the Foursquare Gospel Church's mission and history in ${language}. 
@@ -137,20 +141,16 @@ export default function About() {
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-3xl w-full overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-lg">
                 <img 
-                  src="https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_1.png" 
+                  src="/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(1).webp" 
                   alt="Church Event" 
                   className="w-full h-auto block"
-                  referrerPolicy="no-referrer"
-                  style={{ imageRendering: 'auto' }}
                 />
               </div>
               <div className="rounded-3xl w-full overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-lg mt-8">
                 <img 
-                  src="https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_3.png" 
+                  src="/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(3).webp" 
                   alt="Worship" 
                   className="w-full h-auto block"
-                  referrerPolicy="no-referrer"
-                  style={{ imageRendering: 'auto' }}
                 />
               </div>
             </div>

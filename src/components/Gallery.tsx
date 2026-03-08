@@ -4,32 +4,32 @@ import { useTranslation } from '../context/LanguageContext';
 
 const images = [
   {
-    url: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_0.png",
+    url: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka.webp",
     title: "Sunday Celebration",
     category: "Worship"
   },
   {
-    url: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_1.png",
+    url: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(1).webp",
     title: "Community Fellowship",
     category: "Community"
   },
   {
-    url: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_3.png",
+    url: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(3).webp",
     title: "Prayer & Worship",
     category: "Spiritual"
   },
   {
-    url: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_4.png",
+    url: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(4).webp",
     title: "Deep Intercession",
     category: "Prayer"
   },
   {
-    url: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_5.png",
+    url: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(5).webp",
     title: "Men's Ministry",
     category: "Community"
   },
   {
-    url: "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_8.png",
+    url: "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(8).webp",
     title: "Worship Team",
     category: "Music"
   }
@@ -89,10 +89,10 @@ export default function Gallery() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_5.png",
-              "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_7.png",
-              "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_8.png",
-              "https://storage.googleapis.com/file-extract.appspot.com/ais-dev-x3lbrezhaqdwtwathdjn4e-493378201539.europe-west2.run.app/1741356505706_0.png"
+              "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(5).webp",
+              "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(7).webp",
+              "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka(8).webp",
+              "/images/Ijuru rirakinguka iyo duhimbaje Imana dufite umutima uciye bugufi.Zaburi 100-2 Mukorere Uwiteka.webp"
             ].map((url, i) => (
               <motion.div
                 key={i}
@@ -106,8 +106,6 @@ export default function Gallery() {
                   src={url} 
                   alt="Study Session" 
                   className="w-full h-auto block" 
-                  referrerPolicy="no-referrer" 
-                  style={{ imageRendering: 'auto' }}
                 />
               </motion.div>
             ))}
@@ -146,8 +144,6 @@ export default function Gallery() {
                 src={img.url} 
                 alt={img.title} 
                 className="w-full h-auto block"
-                referrerPolicy="no-referrer"
-                style={{ imageRendering: 'auto' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
                 <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-2">{img.category}</span>

@@ -24,12 +24,16 @@ export default function App() {
   return (
     <div 
       className={cn(
-        "min-h-screen font-sans transition-all duration-700 bg-white",
+        "min-h-screen font-sans transition-all duration-700 bg-gray-100",
         isWordLight 
           ? "selection:bg-purple-100 selection:text-purple-900 site-wordlight" 
           : "selection:bg-emerald-100 selection:text-emerald-900 site-citylight"
       )}
     >
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-4 px-4">
+        <h1 className="text-2xl font-bold">Grace Community Church</h1>
+        <p className="text-sm">Welcome to our website!</p>
+      </div>
       <Navbar />
       <main>
         <Hero />
