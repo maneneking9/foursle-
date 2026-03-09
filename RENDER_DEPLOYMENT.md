@@ -2,11 +2,12 @@
 
 This guide explains how to deploy the Foursquare Church application to Render with full API functionality.
 
-## Current Status
+## ✅ Current Status
 
-✅ **Database**: Turso database initialized with all required tables
-✅ **API Server**: Production server (`server-prod.ts`) created
-✅ **Frontend**: Build successful
+- **Database**: Turso database initialized with all required tables including branches
+- **API Server**: Production server (`server-prod.ts`) with all endpoints
+- **Frontend**: Build successful with new admin dashboard
+- **Default Branches**: City Light and Word Light branches created
 
 ## Quick Deploy to Render
 
@@ -15,7 +16,7 @@ This guide explains how to deploy the Foursquare Church application to Render wi
 1. **Push code to GitHub**
    ```bash
    git add .
-   git commit -m "Add production server and Render config"
+   git commit -m "Add production server and advanced admin dashboard"
    git push origin main
    ```
 
@@ -49,42 +50,76 @@ After deployment, use these credentials to login:
 - **Email**: manane@gmail.com
 - **Password**: 2026
 
-## New User Registration
+## New Admin Dashboard Features
 
-Users can register at `/register` - the registration is now connected to the real API.
+The admin dashboard now includes:
 
-## Files Modified
+### 🔧 Left Sidebar Navigation
+- Collapsible sidebar with icons
+- Smooth animations
+- User profile section with logout
 
-1. **src/components/LoginPage.tsx** - Now uses real API for authentication
-2. **src/context/AuthContext.tsx** - Now uses real API for login
-3. **src/lib/api.ts** - Fixed API URL path
-4. **server-prod.ts** - New production server with all API endpoints
+### 📊 Dashboard
+- Overview statistics (members, events, sermons, prayers)
+- Recent events and sermons
+
+### ⛪ Church Branches Management (CRUD)
+- Add new branches
+- Edit existing branches
+- Delete branches
+- View branch details (address, pastor, contact, etc.)
+
+### Other Features
+- **Hero Slides**: Add, edit, delete slides
+- **Events**: Full event management
+- **Sermons**: Upload and manage sermons
+- **Testimonies**: Approve or delete
+- **Groups**: Manage small groups
+- **Announcements**: Create and publish
+- **Gallery**: Image management
+- **Members**: View all registered members
+- **Settings**: Church configuration
+
+## Files Created/Modified
+
+1. **server-prod.ts** - Production server with all API endpoints
+2. **init-db.ts** - Database initialization with branches table
+3. **src/components/AdminDashboard.tsx** - New admin with left sidebar
+4. **src/lib/api.ts** - Updated API functions
 5. **render.yaml** - Render deployment configuration
-6. **init-db.ts** - Database initialization script (already run)
+6. **src/components/LoginPage.tsx** - Real API login
+7. **src/context/AuthContext.tsx** - Real API authentication
 
 ## API Endpoints Available
 
+### Auth
 - `POST /api/auth/login` - User login
 - `POST /api/auth/register` - User registration
 - `GET /api/auth/profile/:id` - Get user profile
-- `PUT /api/auth/profile/:id` - Update user profile
+- `PUT /api/auth/profile/:id` - Update profile
 - `POST /api/auth/change-password` - Change password
 
-- `GET /api/hero-slides` - Get hero slides
-- `GET /api/events` - Get events
-- `GET /api/prayers` - Get prayer requests
-- `GET /api/sermons` - Get sermons
-- `GET /api/testimonies` - Get testimonies
-- `GET /api/groups` - Get groups
-- `GET /api/announcements` - Get announcements
-- `GET /api/gallery` - Get gallery images
-- `GET /api/church-profile` - Get church profile
-- `GET /api/feedback` - Get feedback
-- `POST /api/feedback` - Submit feedback
-- `GET /api/membership-requests` - Get membership requests
-- `POST /api/membership-requests` - Submit membership request
-- `GET /api/search` - Search content
-- `POST /api/upload` - Upload files
+### Branches (NEW!)
+- `GET /api/branches` - Get all branches
+- `GET /api/branches/:slug` - Get single branch
+- `POST /api/branches` - Create branch
+- `PUT /api/branches/:id` - Update branch
+- `DELETE /api/branches/:id` - Delete branch
+
+### Content
+- `GET/POST /api/hero-slides` - Hero slides
+- `GET/POST /api/events` - Events
+- `GET/POST /api/sermons` - Sermons
+- `GET/POST /api/testimonies` - Testimonies
+- `GET/POST /api/groups` - Groups
+- `GET/POST /api/announcements` - Announcements
+- `GET/POST /api/gallery` - Gallery
+
+### Other
+- `GET /api/prayers` - Prayer requests
+- `GET /api/members` - Members list
+- `GET /api/search` - Search
+- `POST /api/upload` - File upload
 
 ## Troubleshooting
 

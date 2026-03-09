@@ -455,6 +455,46 @@ export const api = {
     return res.json();
   },
 
+  // Branches
+  getBranches: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/branches`);
+      return res.json();
+    } catch {
+      return [];
+    }
+  },
+
+  getBranch: async (slug: string) => {
+    const res = await safeFetch(`${API_URL}/api/branches/${slug}`);
+    return res.json();
+  },
+
+  createBranch: async (data: any) => {
+    const res = await safeFetch(`${API_URL}/api/branches`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  updateBranch: async (id: number, data: any) => {
+    const res = await safeFetch(`${API_URL}/api/branches/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  deleteBranch: async (id: number) => {
+    const res = await safeFetch(`${API_URL}/api/branches/${id}`, {
+      method: 'DELETE'
+    });
+    return res.json();
+  },
+
   getChurchProfile: async () => {
     try {
       const res = await safeFetch(`${API_URL}/api/church-profile`);

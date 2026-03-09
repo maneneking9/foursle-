@@ -353,6 +353,274 @@ app.get('/api/members', async (req, res) => {
   }
 });
 
+// Branches - Get all branches
+app.get('/api/branches', async (req, res) => {
+  try {
+    const result = await turso.execute('SELECT * FROM branches WHERE is_active = 1 ORDER BY name');
+    const branches = result.rows.map((row: any) => ({
+      ...row,
+      services: row.services ? JSON.parse(row.services) : [],
+      ministries: row.ministries ? JSON.parse(row.ministries) : [],
+      socials: row.socials ? JSON.parse(row.socials) : {}
+    }));
+    res.json(branches);
+  } catch {
+    res.json([]);
+  }
+});
+
+// Branches - Get single branch
+app.get('/api/branches/:slug', async (req, res) => {
+  try {
+    const result = await turso.execute({
+      sql: 'SELECT * FROM branches WHERE slug = ?',
+      args: [req.params.slug]
+    });
+    if (result.rows.length > 0) {
+      const branch = result.rows[0];
+      res.json({
+        ...branch,
+        services: branch.services ? JSON.parse(branch.services) : [],
+        ministries: branch.ministries ? JSON.parse(branch.ministries) : [],
+        socials: branch.socials ? JSON.parse(branch.socials) : {}
+      });
+    } else {
+      res.status(404).json({ message: 'Branch not found' });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Branches - Create
+app.post('/api/branches', async (req, res) => {
+  const { name, slug, address, phone, email, pastor, description, mission, history, image_url, services, ministries, worshippers } = req.body;
+  try {
+    const result = await turso.execute({
+      sql: `INSERT INTO branches (name, slug, address, phone, email, pastor, description, mission, history, image_url, services, ministries, worshippers) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [name, slug, address, phone, email, pastor, description, mission, history, image_url, JSON.stringify(services || []), JSON.stringify(ministries || []), worshippers]
+    });
+    res.json({ success: true, id: result.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Branches - Update
+app.put('/api/branches/:id', async (req, res) => {
+  const { name, slug, address, phone, email, pastor, description, mission, history, image_url, services, ministries, worshippers, is_active } = req.body;
+  try {
+    await turso.execute({
+      sql: `UPDATE branches SET name = ?, slug = ?, address = ?, phone = ?, email = ?, pastor = ?, description = ?, mission = ?, history = ?, image_url = ?, services = ?, ministries = ?, worshippers = ?, is_active = ? WHERE id = ?`,
+      args: [name, slug, address, phone, email, pastor, description, mission, history, image_url, JSON.stringify(services || []), JSON.stringify(ministries || []), worshippers, is_active, parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Branches - Delete
+app.delete('/api/branches/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM branches WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Update Hero Slide
+app.put('/api/admin/hero-slides/:id', async (req, res) => {
+  const { title, subtitle, active } = req.body;
+  try {
+    await turso.execute({
+      sql: 'UPDATE hero_slides SET title = ?, subtitle = ?, active = ? WHERE id = ?',
+      args: [title, subtitle, active, parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Delete Hero Slide
+app.delete('/api/admin/hero-slides/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM hero_slides WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Update Event
+app.put('/api/events/:id', async (req, res) => {
+  const { title, description, date, location, image_url } = req.body;
+  try {
+    await turso.execute({
+      sql: 'UPDATE events SET title = ?, description = ?, date = ?, location = ?, image_url = ? WHERE id = ?',
+      args: [title, description, date, location, image_url, parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Delete Event
+app.delete('/api/events/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM events WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Delete Sermon
+app.delete('/api/sermons/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM sermons WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Approve Testimony
+app.put('/api/admin/testimonies/:id/approve', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'UPDATE testimonies SET approved = 1 WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Delete Testimony
+app.delete('/api/testimonies/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM testimonies WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Delete Group
+app.delete('/api/groups/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM groups WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Create Announcement
+app.post('/api/announcements', async (req, res) => {
+  const { title, content } = req.body;
+  try {
+    const result = await turso.execute({
+      sql: 'INSERT INTO announcements (title, content) VALUES (?, ?)',
+      args: [title, content]
+    });
+    res.json({ success: true, id: result.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Update Announcement
+app.put('/api/announcements/:id', async (req, res) => {
+  const { title, content } = req.body;
+  try {
+    await turso.execute({
+      sql: 'UPDATE announcements SET title = ?, content = ? WHERE id = ?',
+      args: [title, content, parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Delete Announcement
+app.delete('/api/announcements/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM announcements WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Create Gallery Image
+app.post('/api/gallery', async (req, res) => {
+  const { title, image_url, category } = req.body;
+  try {
+    const result = await turso.execute({
+      sql: 'INSERT INTO gallery_images (title, image_url, category) VALUES (?, ?, ?)',
+      args: [title, image_url, category]
+    });
+    res.json({ success: true, id: result.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Update Gallery Image
+app.put('/api/gallery/:id', async (req, res) => {
+  const { title, image_url, category } = req.body;
+  try {
+    await turso.execute({
+      sql: 'UPDATE gallery_images SET title = ?, image_url = ?, category = ? WHERE id = ?',
+      args: [title, image_url, category, parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Delete Gallery Image
+app.delete('/api/gallery/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM gallery_images WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
 // Search
 app.get('/api/search', async (req, res) => {
   const query = req.query.q || '';

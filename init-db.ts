@@ -187,6 +187,30 @@ async function initDatabase() {
   `);
   console.log('✓ Membership requests table created');
 
+  // Branches table
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS branches (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      address TEXT,
+      phone TEXT,
+      email TEXT,
+      pastor TEXT,
+      description TEXT,
+      mission TEXT,
+      history TEXT,
+      image_url TEXT,
+      services TEXT,
+      ministries TEXT,
+      worshippers TEXT,
+      socials TEXT,
+      is_active INTEGER DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  console.log('✓ Branches table created');
+
   // Create default admin user if not exists
   const existingAdmin = await turso.execute({
     sql: 'SELECT id FROM users WHERE email = ?',
@@ -199,6 +223,20 @@ async function initDatabase() {
       args: ['manane@gmail.com', '2026', 'Admin User', 'admin']
     });
     console.log('✓ Default admin user created (email: manane@gmail.com, password: 2026)');
+  }
+
+  // Insert default branches if none exist
+  const existingBranches = await turso.execute('SELECT id FROM branches');
+  if (existingBranches.rows.length === 0) {
+    await turso.execute({
+      sql: `INSERT INTO branches (name, slug, address, phone, email, pastor, description, mission, history, image_url, services, ministries, worshippers, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: ['Foursquare City Light', 'citylight', 'Kigali, Kimironko, Rwanda', '+250 788 123 456', 'citylight@foursquare.rw', 'Rev. Roger Brubeck', 'Our main campus in Kimironko, Kigali, serving as a beacon of hope and faith for the community.', 'To illuminate every corner of our city with the love and truth of Jesus Christ through active service and passionate worship.', 'Founded in 2005, City Light began as a small prayer group in Kimironko and has grown into a thriving community of believers.', '/images/branch/Screenshot 2026-03-07 154024.png', JSON.stringify(['Sunday: 8:00 AM, 10:00 AM, 5:00 PM', 'Wednesday: 7:00 PM', 'Friday: 6:30 PM']), JSON.stringify(['Children Ministry', 'Youth Ministry', 'Women Fellowship', "Men's Group"]), '2,500+', 1]
+    });
+    await turso.execute({
+      sql: `INSERT INTO branches (name, slug, address, phone, email, pastor, description, mission, history, image_url, services, ministries, worshippers, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: ['Word Light Branch', 'wordlight', 'Kigali, Kabuga, Rwanda', '+250 788 987 654', 'wordlight@foursquare.rw', 'Pastor Sarah Uwase', 'A center for biblical excellence and spiritual growth in Kabuga, focusing on the transformative power of God\'s Word.', 'To build a foundation of faith through deep study of God\'s Word and empower believers to live out their calling.', 'Established in 2010 in Kabuga, Word Light was born from a vision to create a center for theological education and spiritual formation.', '/images/branch/Screenshot 2026-03-07 153508.png', JSON.stringify(['Sunday: 9:30 AM', 'Thursday: 6:30 PM']), JSON.stringify(['Bible Study Groups', 'Theological Training', 'Prayer Ministry', 'Evangelism Team']), '1,200+', 1]
+    });
+    console.log('✓ Default branches created');
   }
 
   console.log('\n✅ Database initialization complete!');
