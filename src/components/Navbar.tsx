@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Church, Home, Calendar, BookOpen, Info, Radio, Map, Image as ImageIcon, Languages, ChevronDown, Heart, Book, Sun, Moon, User, Users, Sparkles, HelpCircle, CheckCircle2, Volume2, VolumeX, History as HistoryIcon, Star, Search, Bell, Lock } from 'lucide-react';
+import { Church, Home, Calendar, BookOpen, Info, Radio, Map, Image as ImageIcon, Languages, ChevronDown, Heart, Book, Sun, Moon, User, Users, Sparkles, HelpCircle, CheckCircle2, Volume2, VolumeX, History as HistoryIcon, Star, Search, Bell, Lock, Upload } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ChurchQuiz from './ChurchQuiz';
 import WordDashboard from './WordDashboard';
@@ -101,6 +101,9 @@ export default function Navbar() {
         { name: t('ourHistory'), href: '#history' },
         { name: t('ourValues'), href: '#values' },
         { name: t('generalInfo'), href: '#about' },
+        { name: 'Membership Request', href: '/membership' },
+        { name: 'Prayer Request', href: '/prayer' },
+        { name: 'Volunteer', href: '/volunteer' },
       ]
     },
     { 
@@ -118,6 +121,7 @@ export default function Navbar() {
     },
     { name: t('bibleStudy'), id: 'bibleStudy', href: '#bible-study', icon: BookOpen },
     { name: t('ourMinistries'), id: 'ministries', href: '#ministries', icon: Users },
+    { name: t('volunteer'), id: 'volunteer', href: '#volunteer', icon: Users },
     { name: t('branches'), id: 'branches', href: '#branches', icon: Map },
   ] : [
     { name: t('home'), id: 'home', href: '#home', icon: Home },
@@ -147,6 +151,7 @@ export default function Navbar() {
     },
     { name: t('bibleStudy'), id: 'bibleStudy', href: '#bible-study', icon: BookOpen },
     { name: t('branches'), id: 'branches', href: '#branches', icon: Map },
+    { name: t('volunteer'), id: 'volunteer', href: '#volunteer', icon: Heart },
     { 
       name: t('aboutUs'), 
       id: 'aboutUs', 
@@ -157,6 +162,9 @@ export default function Navbar() {
         { name: t('ourValues'), href: '#values' },
         { name: t('ourMinistries'), href: '#ministries' },
         { name: t('generalInfo'), href: '#about' },
+        { name: 'Membership Request', href: '/membership' },
+        { name: 'Prayer Request', href: '/prayer' },
+        { name: 'Volunteer', href: '/volunteer' },
       ]
     },
   ];
@@ -171,6 +179,27 @@ export default function Navbar() {
 
   const currentLang = languages.find(l => l.code === language) || languages[0];
   const [langOpen, setLangOpen] = useState(false);
+  const [churchProfile, setChurchProfile] = useState({ 
+    logo: '/logo.jpg', 
+    name: 'Foursquare Church', 
+    tagline: 'CityLight Church',
+    wordlightLogo: '/logo.jpg',
+    citylightLogo: '/logo.jpg'
+  });
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const { api } = await import('../lib/api');
+        const profile = await api.getChurchProfile();
+        setChurchProfile(profile);
+      } catch (err) {
+        console.error('Failed to load church profile:', err);
+      }
+    };
+    loadProfile();
+  }, []);
 
   return (
     <nav
@@ -185,21 +214,27 @@ export default function Navbar() {
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-2 shrink-0"
+          className="flex items-center gap-2 shrink-0 cursor-pointer group"
+          onClick={() => user?.role === 'admin' && setShowProfileModal(true)}
         >
-          <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl overflow-hidden flex items-center justify-center bg-white shadow-md">
+          <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl overflow-hidden flex items-center justify-center bg-white shadow-md relative group-hover:ring-2 group-hover:ring-blue-400 transition-all">
             <img 
-              src="/logo.jpg" 
+              src={isWordLight ? (churchProfile.wordlightLogo || churchProfile.logo) : (churchProfile.citylightLogo || churchProfile.logo)} 
               alt="Church Logo" 
               className="w-full h-full object-cover"
             />
+            {user?.role === 'admin' && (
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Upload size={20} className="text-white" />
+              </div>
+            )}
           </div>
           <div className="flex flex-col">
             <span className="text-sm lg:text-base font-bold tracking-tight whitespace-nowrap uppercase transition-colors text-[#1877f2]">
-              {isWordLight ? "Word Light" : "Foursquare"}
+              {isWordLight ? "Word Light" : churchProfile.name}
             </span>
             <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">
-              {isWordLight ? "Biblical Excellence" : "CityLight Church"}
+              {isWordLight ? "Biblical Excellence" : churchProfile.tagline}
             </span>
           </div>
         </motion.div>
@@ -464,6 +499,140 @@ export default function Navbar() {
         onClose={() => setIsQuizOpen(false)}
         onComplete={(score) => setQuizScore(score)}
       />
+
+      {showProfileModal && (
+        <ProfileImageModal 
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
+          currentProfile={churchProfile}
+          onUpdate={(profile) => {
+            setChurchProfile(profile);
+            setShowProfileModal(false);
+          }}
+        />
+      )}
     </nav>
+  );
+}
+
+function ProfileImageModal({ isOpen, onClose, currentProfile, onUpdate }: any) {
+  const [citylightLogo, setCitylightLogo] = useState('');
+  const [wordlightLogo, setWordlightLogo] = useState('');
+  const [name, setName] = useState(currentProfile.name);
+  const [tagline, setTagline] = useState(currentProfile.tagline);
+  const [loading, setLoading] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'citylight' | 'wordlight') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (type === 'citylight') setCitylightLogo(reader.result as string);
+        else setWordlightLogo(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const { api } = await import('../lib/api');
+      const result = await api.updateChurchProfile({ 
+        citylightLogo: citylightLogo || currentProfile.citylightLogo,
+        wordlightLogo: wordlightLogo || currentProfile.wordlightLogo,
+        name, 
+        tagline 
+      });
+      if (result.success) {
+        onUpdate({ 
+          citylightLogo: result.citylightLogo || citylightLogo,
+          wordlightLogo: result.wordlightLogo || wordlightLogo,
+          name, 
+          tagline 
+        });
+      }
+    } catch (err) {
+      alert('Failed to update profile');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.9 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+          >
+            <h3 className="text-2xl font-bold mb-6">Update Church Profile</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2">CityLight Logo</label>
+                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'citylight')} className="w-full text-sm" />
+                {(citylightLogo || currentProfile.citylightLogo) && (
+                  <img src={citylightLogo || currentProfile.citylightLogo} alt="CityLight" className="mt-2 w-24 h-24 object-cover rounded-xl" />
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold mb-2">WordLight Logo</label>
+                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'wordlight')} className="w-full text-sm" />
+                {(wordlightLogo || currentProfile.wordlightLogo) && (
+                  <img src={wordlightLogo || currentProfile.wordlightLogo} alt="WordLight" className="mt-2 w-24 h-24 object-cover rounded-xl" />
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold mb-2">Church Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-4 py-2 border-2 rounded-xl focus:border-blue-500 outline-none"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold mb-2">Tagline</label>
+                <input
+                  type="text"
+                  value={tagline}
+                  onChange={(e) => setTagline(e.target.value)}
+                  className="w-full px-4 py-2 border-2 rounded-xl focus:border-blue-500 outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={onClose}
+                className="flex-1 px-4 py-3 bg-gray-200 rounded-xl font-semibold hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? 'Updating...' : 'Update'}
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

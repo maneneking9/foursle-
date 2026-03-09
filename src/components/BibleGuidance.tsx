@@ -10,6 +10,30 @@ if (import.meta.env.VITE_GEMINI_API_KEY) {
   ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 }
 
+// Sample Bible verses and guidance for offline fallback
+const sampleGuidance: Record<string, { verse: string; guidance: string; feedback: string }> = {
+  "lonely": {
+    verse: "Deuteronomy 31:6",
+    guidance: "Be strong and courageous. Do not be afraid or terrified... for the LORD your God goes with you; he will never leave you nor forsake you.",
+    feedback: "Remember: God's presence is always with you, even when you feel alone."
+  },
+  "fear": {
+    verse: "Isaiah 41:10",
+    guidance: "So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.",
+    feedback: "God's strength is made perfect in our weakness. Trust in Him."
+  },
+  "stress": {
+    verse: "Philippians 4:6-7",
+    guidance: "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God. And the peace of God, which transcends all understanding, will guard your hearts and your minds in Christ Jesus.",
+    feedback: "Cast all your cares on Him because He cares for you."
+  },
+  "default": {
+    verse: "Joshua 1:9",
+    guidance: "Have I not commanded you? Be strong and courageous. Do not be afraid; do not be discouraged, for the LORD your God will be with you wherever you go.",
+    feedback: "Trust in the Lord's presence and guidance in all circumstances."
+  }
+};
+
 export default function BibleGuidance() {
   const { isWordLight } = useSite();
   const [query, setQuery] = useState('');
@@ -52,7 +76,7 @@ export default function BibleGuidance() {
   const handleSearch = async (e: React.FormEvent | string) => {
     if (typeof e !== 'string') e.preventDefault();
     const searchQuery = typeof e === 'string' ? e : query;
-    if (!searchQuery.trim() || loading || !ai) return;
+    if (!searchQuery.trim() || loading) return;
 
     if (typeof e === 'string') setQuery(e);
 
@@ -61,6 +85,32 @@ export default function BibleGuidance() {
     setFeedback('');
     setShowFlyerPreview(false);
     setSuggestions([]);
+    
+    // Use sample guidance if AI is not available
+    if (!ai) {
+      // Find matching guidance based on keywords
+      const lowercaseQuery = searchQuery.toLowerCase();
+      let matchedGuidance = sampleGuidance.default;
+      
+      for (const [key, value] of Object.entries(sampleGuidance)) {
+        if (key !== 'default' && lowercaseQuery.includes(key)) {
+          matchedGuidance = value;
+          break;
+        }
+      }
+      
+      // Simulate typing effect
+      const fullText = `${matchedGuidance.verse} - ${matchedGuidance.guidance}`;
+      let displayText = '';
+      for (let i = 0; i < fullText.length; i++) {
+        displayText += fullText[i];
+        setStreamingText(displayText);
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+      setFeedback(matchedGuidance.feedback);
+      setLoading(false);
+      return;
+    }
     
     try {
       // Step 1: Guidance & Verse (30 words)

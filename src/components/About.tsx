@@ -131,7 +131,27 @@ export default function About() {
   return (
     <section id="about" className="py-24 bg-emerald-50/50 transition-colors">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="text-center mb-16">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+          >
+            About Citylight Foursquare Church
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-gray-600 max-w-3xl mx-auto text-lg"
+          >
+            Discover our story, mission, and the vibrant community that makes Citylight Foursquare Church a place of faith, hope, and love.
+          </motion.p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -154,44 +174,6 @@ export default function About() {
                 />
               </div>
             </div>
-            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-emerald-600 rounded-full -z-10 blur-3xl opacity-20" />
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mt-8 p-6 bg-white rounded-[2rem] shadow-xl border border-slate-100"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2 text-emerald-600">
-                  <Sparkles size={18} />
-                  <span className="font-bold text-sm uppercase tracking-widest">AI Quick Summary</span>
-                </div>
-                <button 
-                  onClick={generateAISummary}
-                  disabled={isSummarizing}
-                  className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-all disabled:opacity-50"
-                >
-                  {isSummarizing ? <Loader2 size={16} className="animate-spin" /> : <Languages size={16} />}
-                </button>
-              </div>
-              <AnimatePresence mode="wait">
-                {summary ? (
-                  <motion.p 
-                    key="summary"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-sm text-slate-600 italic leading-relaxed"
-                  >
-                    "{summary}"
-                  </motion.p>
-                ) : (
-                  <p key="placeholder" className="text-sm text-slate-400 italic">
-                    Click the icon to generate an AI summary in {language}...
-                  </p>
-                )}
-              </AnimatePresence>
-            </motion.div>
           </motion.div>
 
           <motion.div
@@ -199,79 +181,50 @@ export default function About() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-emerald-600 font-bold text-sm uppercase tracking-widest mb-2 block">{t('heritage')}</span>
-            <h2 className="text-4xl font-bold text-slate-900 mb-6">{t('foursquareTitle')}</h2>
+            <h3 className="text-3xl font-bold text-gray-900 mb-6">Bishop and Madam Bishop</h3>
+            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+              Under the leadership of Rev. Roger Brubeck, CityLight Foursquare Church has grown into a vibrant community of believers, impacting lives across Rwanda since 2005.
+            </p>
             
-            <div className="space-y-6 mb-10">
-              <p className="text-lg text-slate-600 leading-relaxed">
-                {t('foursquareDesc')}
-              </p>
-              
-              <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <h4 className="text-emerald-600 font-bold text-sm uppercase tracking-widest mb-3">{t('foundationHistory')}</h4>
-                <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                  {t('foundationHistorySub')}
-                </p>
-                <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-100">
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900 uppercase mb-1">{t('founder')}</h5>
-                    <p className="text-xs text-slate-500">Aimee Semple McPherson</p>
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900 uppercase mb-1">{t('established')}</h5>
-                    <p className="text-xs text-slate-500">January 1, 1923</p>
-                  </div>
-                </div>
-              </div>
-
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-6">
+              <h4 className="text-emerald-600 font-bold text-sm uppercase tracking-widest mb-3">Our Core Beliefs</h4>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { title: t('savior'), desc: t('saviorDesc') },
-                  { title: t('baptizer'), desc: t('baptizerDesc') },
-                  { title: t('healer'), desc: t('healerDesc') },
-                  { title: t('comingKing'), desc: t('comingKingDesc') }
+                  { title: 'Spiritual Integrity', icon: Shield },
+                  { title: 'Community Engagement', icon: Users2 },
+                  { title: 'Inclusivity', icon: Target },
+                  { title: 'Service & Compassion', icon: Sparkles }
                 ].map((value, i) => (
-                  <div key={i} className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                    <h5 className="text-sm font-bold text-emerald-700 mb-1">{value.title}</h5>
-                    <p className="text-[10px] text-slate-500">{value.desc}</p>
+                  <div key={i} className="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl">
+                    <value.icon size={20} className="text-emerald-600" />
+                    <span className="text-sm font-bold text-gray-700">{value.title}</span>
                   </div>
                 ))}
               </div>
-
-              <p className="text-slate-600 leading-relaxed">
-                {t('globalFamily')}
-              </p>
-            </div>
-
-            <div className="space-y-8">
-              <div className="flex gap-6">
-                <div className="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center text-emerald-600 shrink-0">
-                  <Target size={24} />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">{t('ourMission')}</h4>
-                  <p className="text-slate-600">{t('ourMissionSub')}</p>
-                </div>
-              </div>
-
-              <div className="flex gap-6">
-                <div className="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center text-emerald-600 shrink-0">
-                  <Users2 size={24} />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">{t('getInvolved')}</h4>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    {["Small Groups", "Youth Ministry", "Worship Team", "Community Service", "Missions", "Prayer Chain"].map(way => (
-                      <div key={way} className="flex items-center gap-2 text-sm text-slate-500">
-                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                        {way}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
           </motion.div>
+        </div>
+
+        <div className="bg-gradient-to-r from-emerald-600 to-blue-600 rounded-3xl p-12 text-white text-center">
+          <h3 className="text-3xl font-bold mb-4">Our Leadership Team</h3>
+          <p className="text-xl text-emerald-100 max-w-3xl mx-auto mb-8">
+            Meet the dedicated leaders who guide our church community with wisdom, compassion, and unwavering faith.
+          </p>
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {[
+              { name: 'Rev. Roger Brubeck', role: 'Senior Pastor', image: '/logo.jpg' },
+              { name: 'Pastor Sarah Uwase', role: 'Word Light Branch', image: '/logo.jpg' },
+              { name: 'Leadership Team', role: 'Ministry Leaders', image: '/logo.jpg' }
+            ].map((leader, i) => (
+              <div key={i} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all">
+                <div className="w-24 h-24 bg-white rounded-full mx-auto mb-4 overflow-hidden">
+                  <img src={leader.image} alt={leader.name} className="w-full h-full object-cover" />
+                </div>
+                <h4 className="font-bold text-lg mb-1">{leader.name}</h4>
+                <p className="text-emerald-100 text-sm">{leader.role}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

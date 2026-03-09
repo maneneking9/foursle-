@@ -45,8 +45,9 @@ export default function RegisterPage() {
       } else {
         setError(result.message || 'Registration failed');
       }
-    } catch (err) {
-      setError('Backend API not available. This is a demo deployment. Run locally for full functionality.');
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.message || 'Cannot connect to server. Please run: npm run server');
     }
     setLoading(false);
   };
@@ -214,10 +215,20 @@ export default function RegisterPage() {
                   initial={{ opacity: 0, y: -10 }} 
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2"
+                  className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm"
                 >
-                  <AlertCircle size={16} />
-                  {error}
+                  <div className="flex items-start gap-2">
+                    <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                    <div>
+                      <p className="font-semibold mb-1">{error}</p>
+                      {error.includes('server') && (
+                        <div className="text-xs mt-2 bg-red-100 p-2 rounded">
+                          <p className="font-bold mb-1">⚠️ Backend Not Running!</p>
+                          <p>Open terminal and run: <code className="bg-red-200 px-1 rounded">npm run server</code></p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

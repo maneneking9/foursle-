@@ -1,10 +1,18 @@
-const API_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 const safeFetch = async (url: string, options?: RequestInit) => {
-  if (!API_URL) {
-    throw new Error('API not configured');
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok && response.status >= 500) {
+      throw new Error('Server error. Please try again.');
+    }
+    return response;
+  } catch (error: any) {
+    if (error.message.includes('fetch')) {
+      throw new Error('Cannot connect to server');
+    }
+    throw error;
   }
-  return fetch(url, options);
 };
 
 export const api = {
@@ -445,5 +453,59 @@ export const api = {
   getMembersByLocation: async (location: string) => {
     const res = await safeFetch(`${API_URL}/api/members/location/${location}`);
     return res.json();
+  },
+
+  getChurchProfile: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/church-profile`);
+      return res.json();
+    } catch {
+      return { logo: '/logo.jpg', name: 'Foursquare Church', tagline: 'CityLight Church' };
+    }
+  },
+
+  updateChurchProfile: async (data: { logo?: string; name?: string; tagline?: string }) => {
+    const res = await safeFetch(`${API_URL}/api/church-profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  createFeedback: async (data: { name: string; message: string }) => {
+    const res = await safeFetch(`${API_URL}/api/feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  getFeedback: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/feedback`);
+      return res.json();
+    } catch {
+      return [];
+    }
+  },
+
+  createMembershipRequest: async (data: any) => {
+    const res = await safeFetch(`${API_URL}/api/membership-requests`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  getMembershipRequests: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/membership-requests`);
+      return res.json();
+    } catch {
+      return [];
+    }
   }
 };

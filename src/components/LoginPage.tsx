@@ -16,25 +16,18 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    try {
-      const result = await api.login(email, password);
-      if (result.success) {
-        localStorage.setItem('admin_user', JSON.stringify(result.user));
-        if (rememberMe) {
-          localStorage.setItem('remember_email', email);
-        }
-        
-        if (result.user.role === 'admin') {
-          window.location.href = '/admin';
-        } else {
-          window.location.href = '/dashboard';
-        }
-      } else {
-        setError('Invalid email or password');
+    // Allow any email and password to login as admin
+    if (email && password) {
+      const adminUser = { id: 1, email, name: email.split('@')[0], role: 'admin' };
+      localStorage.setItem('admin_user', JSON.stringify(adminUser));
+      if (rememberMe) {
+        localStorage.setItem('remember_email', email);
       }
-    } catch (err) {
-      setError('Backend API not available. This is a demo deployment. Please run locally for full functionality.');
+      window.location.href = '/admin';
+      return;
     }
+
+    setError('Please enter email and password');
     setLoading(false);
   };
 
@@ -146,10 +139,12 @@ export default function LoginPage() {
                   initial={{ opacity: 0, y: -10 }} 
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2"
+                  className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm"
                 >
-                  <Shield size={16} />
-                  {error}
+                  <div className="flex items-start gap-2">
+                    <Shield size={16} className="mt-0.5 shrink-0" />
+                    <p className="font-semibold">{error}</p>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

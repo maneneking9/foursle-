@@ -48,11 +48,20 @@ export default function AuthModal({ isOpen, onClose, onAuth }: AuthModalProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onAuth(formData);
-      onClose();
+      try {
+        if (isLogin) {
+          const success = await onAuth(formData);
+          if (success) onClose();
+        } else {
+          await onAuth(formData);
+          onClose();
+        }
+      } catch (error: any) {
+        setErrors({ submit: error.message || 'Operation failed' });
+      }
     }
   };
 
@@ -264,6 +273,17 @@ export default function AuthModal({ isOpen, onClose, onAuth }: AuthModalProps) {
                   </>
                 )}
               </motion.button>
+
+              {/* Error Message */}
+              {errors.submit && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"
+                >
+                  {errors.submit}
+                </motion.div>
+              )}
 
               {/* Features (Register only) */}
               {!isLogin && (

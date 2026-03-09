@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const [gallery, setGallery] = useState([]);
   const [branches, setBranches] = useState([]);
   const [dynamicImages, setDynamicImages] = useState([]);
+  const [churchPlans, setChurchPlans] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -37,6 +38,10 @@ export default function AdminDashboard() {
       if (activeTab === 'gallery') setGallery(await api.getGallery());
       if (activeTab === 'branches') setBranches(await api.getBranchImages());
       if (activeTab === 'dynamic') setDynamicImages(await api.getDynamicImages());
+      if (activeTab === 'plans') {
+        const plans = localStorage.getItem('church_plans');
+        setChurchPlans(plans ? JSON.parse(plans) : []);
+      }
     } catch (error) {
       console.error('Failed to load data:', error);
     }
@@ -52,6 +57,7 @@ export default function AdminDashboard() {
     { id: 'gallery', name: 'Gallery', icon: ImageIcon },
     { id: 'branches', name: 'Branch Images', icon: Map },
     { id: 'dynamic', name: 'Dynamic Images', icon: ImageIcon },
+    { id: 'plans', name: 'Church Plans', icon: BookOpen },
   ];
 
   const handleSlideSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -643,6 +649,89 @@ export default function AdminDashboard() {
                 <input name="image" type="file" accept="image/*" required className="w-full px-4 py-3 border rounded-lg" />
                 <button type="submit" disabled={uploading} className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-bold">
                   {uploading ? 'Uploading...' : 'Add Dynamic Image'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Church Plans */}
+        {activeTab === 'plans' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h2 className="text-xl font-bold mb-4">Church Plans</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-slate-50 border-b">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase">Plan Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase">Description</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase">Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase">Status</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {churchPlans.map((plan: any, idx: number) => (
+                      <tr key={idx} className="hover:bg-slate-50">
+                        <td className="px-4 py-3 font-medium">{plan.name}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600">{plan.description}</td>
+                        <td className="px-4 py-3 text-sm">{plan.date}</td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            plan.status === 'completed' ? 'bg-green-100 text-green-700' :
+                            plan.status === 'in-progress' ? 'bg-blue-100 text-blue-700' :
+                            'bg-yellow-100 text-yellow-700'
+                          }`}>
+                            {plan.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <button 
+                            onClick={() => {
+                              const updated = churchPlans.filter((_, i) => i !== idx);
+                              setChurchPlans(updated);
+                              localStorage.setItem('church_plans', JSON.stringify(updated));
+                            }}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h2 className="text-xl font-bold mb-4">Add Church Plan</h2>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                const formData = new FormData(form);
+                const newPlan = {
+                  name: formData.get('name'),
+                  description: formData.get('description'),
+                  date: formData.get('date'),
+                  status: formData.get('status')
+                };
+                const updated = [...churchPlans, newPlan];
+                setChurchPlans(updated);
+                localStorage.setItem('church_plans', JSON.stringify(updated));
+                form.reset();
+              }} className="space-y-4">
+                <input name="name" required placeholder="Plan Name" className="w-full px-4 py-3 border rounded-lg" />
+                <textarea name="description" required placeholder="Description" className="w-full px-4 py-3 border rounded-lg" rows={3} />
+                <input name="date" type="date" required className="w-full px-4 py-3 border rounded-lg" />
+                <select name="status" required className="w-full px-4 py-3 border rounded-lg">
+                  <option value="planned">Planned</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+                <button type="submit" className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700">
+                  Add Plan
                 </button>
               </form>
             </div>

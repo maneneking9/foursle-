@@ -5,7 +5,6 @@ import './index.css';
 import { LanguageProvider } from './context/LanguageContext';
 import { SiteProvider } from './context/SiteContext';
 
-// Error boundary to catch render errors
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean; error?: Error }
@@ -36,23 +35,18 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-// Global error handler for uncaught errors
-window.onerror = (message, source, lineno, colno, error) => {
-  console.error('Global error:', { message, source, lineno, colno, error });
-};
-
-window.onunhandledrejection = (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
-};
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <LanguageProvider>
-        <SiteProvider>
-          <App />
-        </SiteProvider>
-      </LanguageProvider>
-    </ErrorBoundary>
-  </StrictMode>,
-);
+const rootElement = document.getElementById('root')!;
+if (!rootElement._reactRootContainer) {
+  const root = createRoot(rootElement);
+  root.render(
+    <StrictMode>
+      <ErrorBoundary>
+        <LanguageProvider>
+          <SiteProvider>
+            <App />
+          </SiteProvider>
+        </LanguageProvider>
+      </ErrorBoundary>
+    </StrictMode>
+  );
+}

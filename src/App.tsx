@@ -14,6 +14,10 @@ import Ministries from './components/Ministries';
 import About from './components/About';
 import Chatbot from './components/Chatbot';
 import TheologicalTools from './components/TheologicalTools';
+import Volunteer from './components/Volunteer';
+import UserFeedback from './components/UserFeedback';
+import MembershipRequest from './components/MembershipRequest';
+import PrayerRequest from './components/PrayerRequest';
 import Footer from './components/Footer';
 import MobileBottomNav from './components/MobileBottomNav';
 import AdminDashboard from './components/AdminDashboard';
@@ -65,6 +69,9 @@ export default function App() {
   if (currentPath === '/login') return <LoginPage />;
   if (currentPath === '/register') return <RegisterPage />;
   if (currentPath === '/join') return <MemberRegistrationPage />;
+  if (currentPath === '/membership') return <MembershipRequest />;
+  if (currentPath === '/prayer') return <PrayerRequest />;
+  if (currentPath === '/volunteer') return <Volunteer />;
   if (currentPath === '/dashboard') return <UserDashboard />;
   if (currentPath === '/admin') return <AdminDashboard />;
 
@@ -96,7 +103,9 @@ export default function App() {
         {isWordLight && <TheologicalTools />}
         <Gallery />
         <Branches />
+        <Volunteer />
         <About />
+        <UserFeedback />
       </main>
       <Chatbot />
       <MobileBottomNav />

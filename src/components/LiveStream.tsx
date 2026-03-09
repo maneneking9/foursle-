@@ -29,7 +29,7 @@ export default function LiveStream() {
 
   const socialLinks = [
     { icon: Facebook, label: 'Facebook Live', color: 'bg-[#1877F2]', href: '#' },
-    { icon: Youtube, label: 'YouTube Live', color: 'bg-[#FF0000]', href: 'https://www.youtube.com/@FoursquareCityLight' },
+    { icon: Youtube, label: 'YouTube Live', color: 'bg-[#FF0000]', href: 'https://www.youtube.com/@CITYLIGHTTV' },
     { icon: Instagram, label: 'Instagram', color: 'bg-[#E4405F]', href: '#' },
     { icon: Twitter, label: 'Twitter', color: 'bg-[#1DA1F2]', href: '#' }
   ];
@@ -119,14 +119,14 @@ export default function LiveStream() {
                       exit={{ opacity: 0 }}
                       className="w-full h-full"
                     >
-                      <iframe 
-                        className="w-full h-full"
-                        src="https://www.youtube.com/embed/live_stream?channel=UCv_S27K_K_K_K_K_K_K_K_K&autoplay=1&mute=1" 
-                        title="Word Light Study Session"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                      ></iframe>
+                    <iframe 
+                      className="w-full h-full"
+                      src="https://www.youtube.com/embed/live_stream?channel=UCv_S27K_K_K_K_K_K_K_K_K&autoplay=1&mute=1&cc_load_policy=1&cc_lang_pref=en" 
+                      title="Word Light Study Session"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
                       <div className="absolute top-6 right-6 px-4 py-2 bg-purple-600 text-white rounded-full text-[10px] font-bold uppercase tracking-widest animate-pulse">
                         Live Study
                       </div>
@@ -303,7 +303,7 @@ export default function LiveStream() {
                   >
                     <iframe 
                       className="w-full h-full"
-                      src="https://www.youtube.com/embed/live_stream?channel=UCv_S27K_K_K_K_K_K_K_K_K&autoplay=1&mute=1" 
+                      src="https://www.youtube.com/embed/live_stream?channel=UCv_S27K_K_K_K_K_K_K_K_K&autoplay=1&mute=1&cc_load_policy=1&cc_lang_pref=en" 
                       title="Foursquare City Light Live Stream"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

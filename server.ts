@@ -468,6 +468,145 @@ app.get('/api/members/location/:location', (req, res) => {
   res.json(members);
 });
 
+// Church Profile Settings
+app.get('/api/church-profile', (req, res) => {
+  const profile = db.prepare('SELECT * FROM site_settings WHERE key = ?').get('church_profile');
+  if (profile) {
+    res.json(JSON.parse(profile.value));
+  } else {
+    res.json({ 
+      logo: '/logo.jpg', 
+      name: 'Foursquare Church', 
+      tagline: 'CityLight Church',
+      citylightLogo: '/logo.jpg',
+      wordlightLogo: '/logo.jpg'
+    });
+  }
+});
+
+app.put('/api/church-profile', async (req, res) => {
+  const { citylightLogo, wordlightLogo, name, tagline } = req.body;
+  let citylightUrl = citylightLogo;
+  let wordlightUrl = wordlightLogo;
+  
+  if (citylightLogo && citylightLogo.startsWith('data:')) {
+    const result = await cloudinary.uploader.upload(citylightLogo, { folder: 'church-profile' });
+    citylightUrl = result.secure_url;
+  }
+  
+  if (wordlightLogo && wordlightLogo.startsWith('data:')) {
+    const result = await cloudinary.uploader.upload(wordlightLogo, { folder: 'church-profile' });
+    wordlightUrl = result.secure_url;
+  }
+  
+  const profileData = JSON.stringify({ citylightLogo: citylightUrl, wordlightLogo: wordlightUrl, name, tagline });
+  const existing = db.prepare('SELECT * FROM site_settings WHERE key = ?').get('church_profile');
+  
+  if (existing) {
+    db.prepare('UPDATE site_settings SET value = ? WHERE key = ?').run(profileData, 'church_profile');
+  } else {
+    db.prepare('INSERT INTO site_settings (key, value) VALUES (?, ?)').run('church_profile', profileData);
+  }
+  
+  res.json({ success: true, citylightLogo: citylightUrl, wordlightLogo: wordlightUrl });
+});
+
+// Feedback
+app.post('/api/feedback', (req, res) => {
+  const { name, message } = req.body;
+  try {
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS feedback (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        message TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run();
+    
+    const stmt = db.prepare('INSERT INTO feedback (name, message) VALUES (?, ?)');
+    const info = stmt.run(name, message);
+    res.json({ success: true, id: info.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+app.get('/api/feedback', (req, res) => {
+  try {
+    const feedback = db.prepare('SELECT * FROM feedback ORDER BY created_at DESC LIMIT 50').all();
+    res.json(feedback);
+  } catch {
+    res.json([]);
+  }
+});
+
+// Membership Requests
+app.post('/api/membership-requests', (req, res) => {
+  const data = req.body;
+  try {
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS membership_requests (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        gender TEXT,
+        date_of_birth TEXT,
+        marital_status TEXT,
+        nationality TEXT,
+        id_number TEXT,
+        phone_number TEXT NOT NULL,
+        email TEXT NOT NULL,
+        home_address TEXT,
+        emergency_contact TEXT,
+        salvation_date TEXT,
+        baptism_water_date TEXT,
+        baptism_holy_spirit_date TEXT,
+        ministry TEXT,
+        cell TEXT,
+        spouse_name TEXT,
+        number_of_children TEXT,
+        household_member TEXT,
+        family_role TEXT,
+        membership_start_date TEXT,
+        attendance_frequency TEXT,
+        accepted_jesus TEXT,
+        reason TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run();
+    
+    const stmt = db.prepare(`
+      INSERT INTO membership_requests (
+        full_name, gender, date_of_birth, marital_status, nationality, id_number,
+        phone_number, email, home_address, emergency_contact, salvation_date,
+        baptism_water_date, baptism_holy_spirit_date, ministry, cell, spouse_name,
+        number_of_children, household_member, family_role, membership_start_date,
+        attendance_frequency, accepted_jesus, reason
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    const info = stmt.run(
+      data.fullName, data.gender, data.dateOfBirth, data.maritalStatus, data.nationality,
+      data.idNumber, data.phoneNumber, data.email, data.homeAddress, data.emergencyContact,
+      data.salvationDate, data.baptismWaterDate, data.baptismHolySpiritDate, data.ministry,
+      data.cell, data.spouseName, data.numberOfChildren, data.householdMember, data.familyRole,
+      data.membershipStartDate, data.attendanceFrequency, data.acceptedJesus, data.reason
+    );
+    res.json({ success: true, id: info.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+app.get('/api/membership-requests', (req, res) => {
+  try {
+    const requests = db.prepare('SELECT * FROM membership_requests ORDER BY created_at DESC').all();
+    res.json(requests);
+  } catch {
+    res.json([]);
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 

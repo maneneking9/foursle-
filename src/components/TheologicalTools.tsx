@@ -4,6 +4,24 @@ import { Book, Search, Languages, FileText, Sparkles, ChevronRight, Loader2, Mes
 import { useTranslation } from '../context/LanguageContext';
 import { GoogleGenAI } from "@google/genai";
 
+let ai: GoogleGenAI | null = null;
+if (import.meta.env.VITE_GEMINI_API_KEY) {
+  ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+}
+
+// Sample word studies for offline fallback
+const sampleWordStudies: Record<string, string> = {
+  "grace": `BIBLICAL WORD STUDY: GRACE (Greek: charis)\n\nDefinition: Unmerited favor, God's blessings given freely to sinners.\n\nGreek Origin: χάρις (charis) - meaning "grace", "favor", "blessing"\n\nKey Scripture: "For by grace you have been saved through faith, and that not of yourselves; it is the gift of God" (Ephesians 2:8)\n\nTheological Significance: Grace is central to salvation - it is God's unearned love and mercy extended to humanity through Jesus Christ.\n\nCross-References: John 1:14, Romans 3:24, Titus 2:11`,
+  
+  "faith": `BIBLICAL WORD STUDY: FAITH (Greek: pistis)\n\nDefinition: Trust, belief, confidence in God and His promises.\n\nGreek Origin: πίστις (pistis) - meaning "faith", "belief", "trust"\n\nKey Scripture: "Now faith is the substance of things hoped for, the evidence of things not seen" (Hebrews 11:1)\n\nTheological Significance: Faith is the means by which we receive God's salvation and righteousness.\n\nCross-References: Romans 1:17, Romans 10:17, Ephesians 2:8`,
+  
+  "love": `BIBLICAL WORD STUDY: LOVE (Greek: agape)\n\nDefinition: Unconditional, sacrificial love.\n\nGreek Origin: ἀγάπη (agape) - meaning "love", "charity", "the love of God"\n\nKey Scripture: "For God so loved the world that He gave His only begotten Son" (John 3:16)\n\nTheological Significance: Agape is the highest form of love - selfless, sacrificial, and unconditional.\n\nCross-References: 1 Corinthians 13:4-8, 1 John 4:8, Romans 5:8`,
+  
+  "shalom": `BIBLICAL WORD STUDY: SHALOM (Hebrew: שָׁלוֹם)\n\nDefinition: Completeness, wholeness, peace, well-being.\n\nHebrew Origin: שָׁלוֹם (shalom) - meaning "peace", "wholeness", "safety"\n\nKey Scripture: "Peace I leave with you, My peace I give to you" (John 14:27)\n\nTheological Significance: Shalom represents complete restoration and wholeness - not just absence of conflict.\n\nCross-References: Isaiah 9:6, Romans 5:1, Philippians 4:7`,
+  
+  "default": `BIBLICAL WORD STUDY TOOL\n\nThis tool helps you explore the original meaning of biblical words in their Greek or Hebrew origins.\n\nTo use this feature:\n1. Enter a biblical word like "grace", "faith", "love", or "shalom"\n2. Get Greek/Hebrew origins, definitions, and cross-references\n\nFor full AI-powered word studies, please add your VITE_GEMINI_API_KEY to the .env file.`
+};
+
 export default function TheologicalTools() {
   const { t, language } = useTranslation();
   const [activeTool, setActiveTool] = useState<'study' | 'transcription' | 'assistant'>('study');
@@ -19,9 +37,25 @@ export default function TheologicalTools() {
 
   const handleAction = async () => {
     if (!query) return;
+    
+    // Use sample data if AI is not available
+    if (!ai) {
+      const lowercaseQuery = query.toLowerCase();
+      let matchedStudy = sampleWordStudies.default;
+      
+      for (const [key, value] of Object.entries(sampleWordStudies)) {
+        if (key !== 'default' && lowercaseQuery.includes(key)) {
+          matchedStudy = value;
+          break;
+        }
+      }
+      
+      setResult(matchedStudy);
+      return;
+    }
+    
     setIsLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       let prompt = '';
       
       if (activeTool === 'study') {

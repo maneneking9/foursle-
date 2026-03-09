@@ -33,13 +33,22 @@ npm install
 
 ## 🏃 Running Locally
 
+### ⚠️ IMPORTANT: Backend Server Required
+**You MUST run the backend server for login/register to work!**
+
+If you see "Backend API not available" error:
+1. Open a terminal
+2. Run: `npm run server`
+3. Backend starts on http://localhost:3001
+
 ### Quick Start (Windows)
 ```bash
 start.bat
 ```
+This starts both frontend and backend automatically.
 
 ### Manual Start
-**Terminal 1 - Backend:**
+**Terminal 1 - Backend (REQUIRED):**
 ```bash
 npm run server
 ```

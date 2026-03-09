@@ -49,16 +49,27 @@ export default function ChurchQuiz({ isOpen, onClose, onComplete }: ChurchQuizPr
 
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
   const [showResult, setShowResult] = useState(false);
 
   const handleAnswer = (optionIndex: number) => {
-    const newAnswers = [...answers, optionIndex];
-    setAnswers(newAnswers);
+    setSelectedAnswer(optionIndex);
+    setShowFeedback(true);
+  };
 
-    if (currentStep < questions.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      setShowResult(true);
+  const handleNext = () => {
+    if (selectedAnswer !== null) {
+      const newAnswers = [...answers, selectedAnswer];
+      setAnswers(newAnswers);
+      setSelectedAnswer(null);
+      setShowFeedback(false);
+
+      if (currentStep < questions.length - 1) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        setShowResult(true);
+      }
     }
   };
 
@@ -71,6 +82,8 @@ export default function ChurchQuiz({ isOpen, onClose, onComplete }: ChurchQuizPr
   const resetQuiz = () => {
     setCurrentStep(0);
     setAnswers([]);
+    setSelectedAnswer(null);
+    setShowFeedback(false);
     setShowResult(false);
   };
 
@@ -141,21 +154,79 @@ export default function ChurchQuiz({ isOpen, onClose, onComplete }: ChurchQuizPr
                   </h3>
 
                   <div className="grid gap-4">
-                    {questions[currentStep].options.map((option, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleAnswer(index)}
-                        className="w-full p-5 text-left rounded-2xl border-2 border-slate-100 hover:border-emerald-600 hover:bg-emerald-50 transition-all group"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-slate-700 group-hover:text-emerald-700">{option}</span>
-                          <div className="w-6 h-6 rounded-full border-2 border-slate-200 group-hover:border-emerald-600 flex items-center justify-center">
-                            <div className="w-2 h-2 rounded-full bg-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {questions[currentStep].options.map((option, index) => {
+                      const isSelected = selectedAnswer === index;
+                      const isCorrect = index === questions[currentStep].correctAnswer;
+                      const showCorrect = showFeedback && isCorrect;
+                      const showWrong = showFeedback && isSelected && !isCorrect;
+
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => !showFeedback && handleAnswer(index)}
+                          disabled={showFeedback}
+                          className={cn(
+                            "w-full p-5 text-left rounded-2xl border-2 transition-all group relative",
+                            showCorrect && "border-green-500 bg-green-50",
+                            showWrong && "border-red-500 bg-red-50",
+                            !showFeedback && "border-slate-100 hover:border-emerald-600 hover:bg-emerald-50",
+                            showFeedback && !showCorrect && !showWrong && "border-slate-100 opacity-50"
+                          )}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={cn(
+                              "font-bold",
+                              showCorrect && "text-green-700",
+                              showWrong && "text-red-700",
+                              !showFeedback && "text-slate-700 group-hover:text-emerald-700"
+                            )}>{option}</span>
+                            <div className={cn(
+                              "w-6 h-6 rounded-full border-2 flex items-center justify-center",
+                              showCorrect && "border-green-500 bg-green-500",
+                              showWrong && "border-red-500 bg-red-500",
+                              !showFeedback && "border-slate-200 group-hover:border-emerald-600"
+                            )}>
+                              {showCorrect && <CheckCircle2 size={16} className="text-white" />}
+                              {showWrong && <X size={16} className="text-white" />}
+                              {!showFeedback && <div className="w-2 h-2 rounded-full bg-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                            </div>
                           </div>
-                        </div>
-                      </button>
-                    ))}
+                        </button>
+                      );
+                    })}
                   </div>
+
+                  {showFeedback && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={cn(
+                        "p-4 rounded-2xl border-2 mt-4",
+                        selectedAnswer === questions[currentStep].correctAnswer
+                          ? "bg-green-50 border-green-500"
+                          : "bg-red-50 border-red-500"
+                      )}
+                    >
+                      <p className={cn(
+                        "font-bold mb-2",
+                        selectedAnswer === questions[currentStep].correctAnswer ? "text-green-700" : "text-red-700"
+                      )}>
+                        {selectedAnswer === questions[currentStep].correctAnswer ? "✓ Correct!" : "✗ Incorrect"}
+                      </p>
+                      {selectedAnswer !== questions[currentStep].correctAnswer && (
+                        <p className="text-sm text-slate-600">
+                          The correct answer is: <span className="font-bold text-green-700">{questions[currentStep].options[questions[currentStep].correctAnswer]}</span>
+                        </p>
+                      )}
+                      <button
+                        onClick={handleNext}
+                        className="mt-4 w-full py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
+                      >
+                        {currentStep < questions.length - 1 ? "Next Question" : "See Results"}
+                        <ArrowRight size={20} />
+                      </button>
+                    </motion.div>
+                  )}
                 </div>
               ) : (
                 <motion.div 

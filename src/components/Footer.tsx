@@ -52,15 +52,18 @@ export default function Footer() {
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-emerald-500 shrink-0" />
-                <span>123 Grace Way, Faith City, ST 12345</span>
+                <div>
+                  <p className="font-semibold">City Light: Kigali, Kimironko</p>
+                  <p className="font-semibold">Word Light: Kigali, Kabuga</p>
+                </div>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-emerald-500 shrink-0" />
-                <span>(555) 123-4567</span>
+                <span>+250 788 123 456</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-emerald-500 shrink-0" />
-                <span>hello@gracecommunity.org</span>
+                <span>info@foursquare.rw</span>
               </li>
             </ul>
           </div>
