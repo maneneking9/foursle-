@@ -16,18 +16,21 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    // Allow any email and password to login as admin
-    if (email && password) {
-      const adminUser = { id: 1, email, name: email.split('@')[0], role: 'admin' };
-      localStorage.setItem('admin_user', JSON.stringify(adminUser));
-      if (rememberMe) {
-        localStorage.setItem('remember_email', email);
+    try {
+      const result = await api.login(email, password);
+      if (result.success && result.user) {
+        localStorage.setItem('admin_user', JSON.stringify(result.user));
+        if (rememberMe) {
+          localStorage.setItem('remember_email', email);
+        }
+        window.location.href = '/admin';
+      } else {
+        setError(result.message || 'Invalid email or password');
       }
-      window.location.href = '/admin';
-      return;
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.message || 'Cannot connect to server. Please try again.');
     }
-
-    setError('Please enter email and password');
     setLoading(false);
   };
 

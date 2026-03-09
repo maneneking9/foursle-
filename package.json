@@ -7,11 +7,14 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "server": "tsx watch server.ts",
     "server:turso": "tsx watch server-turso.ts",
+    "server:prod": "node --loader tsx server-prod.ts",
     "start": "concurrently \"npm run server\" \"npm run dev\"",
     "build": "vite build",
+    "build:prod": "vite build && npm run server:prod",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
+    "init-db": "tsx init-db.ts",
     "vercel-build": "vite build"
   },
   "dependencies": {

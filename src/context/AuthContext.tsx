@@ -32,15 +32,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Allow any email and password to login
-    if (email && password) {
-      const user = { id: 1, email, name: email.split('@')[0], role: 'admin' };
-      setUser(user);
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('admin_user', JSON.stringify(user));
-      return true;
+    try {
+      const result = await api.login(email, password);
+      if (result.success && result.user) {
+        setUser(result.user);
+        localStorage.setItem('user', JSON.stringify(result.user));
+        if (result.user.role === 'admin') {
+          localStorage.setItem('admin_user', JSON.stringify(result.user));
+        }
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
   };
 
   const register = async (email: string, password: string, name: string) => {
