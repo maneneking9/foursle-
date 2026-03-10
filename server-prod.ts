@@ -639,27 +639,39 @@ app.delete('/api/announcements/:id', async (req, res) => {
   }
 });
 
-// Create Gallery Image
-app.post('/api/gallery', async (req, res) => {
-  const { title, image_url, category } = req.body;
+// Create Gallery Image (Admin)
+app.post('/api/admin/gallery', async (req, res) => {
+  const { title, image, category } = req.body;
   try {
+    let imageUrl = image;
+    if (image && image.startsWith('data:')) {
+      const uploadResult = await cloudinary.uploader.upload(image, { folder: 'gallery' });
+      imageUrl = uploadResult.secure_url;
+    }
+
     const result = await turso.execute({
       sql: 'INSERT INTO gallery_images (title, image_url, category) VALUES (?, ?, ?)',
-      args: [title, image_url, category]
+      args: [title, imageUrl, category]
     });
-    res.json({ success: true, id: result.lastInsertRowid });
+    res.json({ success: true, id: result.lastInsertRowid, image_url: imageUrl });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }
 });
 
-// Update Gallery Image
-app.put('/api/gallery/:id', async (req, res) => {
-  const { title, image_url, category } = req.body;
+// Update Gallery Image (Admin)
+app.put('/api/admin/gallery/:id', async (req, res) => {
+  const { title, image, category } = req.body;
   try {
+    let imageUrl = image;
+    if (image && image.startsWith('data:')) {
+      const uploadResult = await cloudinary.uploader.upload(image, { folder: 'gallery' });
+      imageUrl = uploadResult.secure_url;
+    }
+
     await turso.execute({
-      sql: 'UPDATE gallery_images SET title = ?, image_url = ?, category = ? WHERE id = ?',
-      args: [title, image_url, category, parseInt(req.params.id)]
+      sql: 'UPDATE gallery_images SET title = ?, image_url = COALESCE(?, image_url), category = ? WHERE id = ?',
+      args: [title, imageUrl || null, category, parseInt(req.params.id)]
     });
     res.json({ success: true });
   } catch (error: any) {
@@ -667,8 +679,8 @@ app.put('/api/gallery/:id', async (req, res) => {
   }
 });
 
-// Delete Gallery Image
-app.delete('/api/gallery/:id', async (req, res) => {
+// Delete Gallery Image (Admin)
+app.delete('/api/admin/gallery/:id', async (req, res) => {
   try {
     await turso.execute({
       sql: 'DELETE FROM gallery_images WHERE id = ?',
@@ -677,6 +689,16 @@ app.delete('/api/gallery/:id', async (req, res) => {
     res.json({ success: true });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Public GET Gallery Images
+app.get('/api/gallery', async (req, res) => {
+  try {
+    const result = await turso.execute('SELECT * FROM gallery_images ORDER BY created_at DESC LIMIT 50');
+    res.json(result.rows);
+  } catch {
+    res.json([]);
   }
 });
 
