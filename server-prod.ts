@@ -706,11 +706,11 @@ app.post('/api/videos', async (req, res) => {
 
 // Videos - Update
 app.put('/api/videos/:id', async (req, res) => {
-  const { title, description, video_url, thumbnail_url, category, duration, is_featured } = req.body;
+  const { title, description, video_url, video_type, thumbnail_url, category, duration, is_featured } = req.body;
   try {
     await turso.execute({
-      sql: 'UPDATE videos SET title = ?, description = ?, video_url = ?, thumbnail_url = ?, category = ?, duration = ?, is_featured = ? WHERE id = ?',
-      args: [title, description, video_url, thumbnail_url, category, duration, is_featured, parseInt(req.params.id)]
+      sql: 'UPDATE videos SET title = ?, description = ?, video_url = ?, video_type = ?, thumbnail_url = ?, category = ?, duration = ?, is_featured = ? WHERE id = ?',
+      args: [title, description, video_url, video_type || 'youtube', thumbnail_url, category, duration, is_featured, parseInt(req.params.id)]
     });
     res.json({ success: true });
   } catch (error: any) {

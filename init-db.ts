@@ -246,6 +246,7 @@ async function initDatabase() {
       title TEXT NOT NULL,
       description TEXT,
       video_url TEXT NOT NULL,
+      video_type TEXT DEFAULT 'youtube',
       thumbnail_url TEXT,
       category TEXT,
       duration TEXT,
@@ -256,6 +257,13 @@ async function initDatabase() {
     )
   `);
   console.log('✓ Videos table created');
+
+  // Add video_type column if not exists (for existing databases)
+  try {
+    await turso.execute('ALTER TABLE videos ADD COLUMN video_type TEXT DEFAULT \'youtube\'');
+  } catch (e) {
+    // Column already exists
+  }
 
   // Volunteer requests table
   await turso.execute(`

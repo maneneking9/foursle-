@@ -7,6 +7,7 @@ import WordDashboard from './WordDashboard';
 import SearchModal from './SearchModal';
 import { useTranslation } from '../context/LanguageContext';
 import { useSite } from '../context/SiteContext';
+import { api } from '../lib/api';
 
 export default function Navbar() {
   const { language, setLanguage, t } = useTranslation();
@@ -26,13 +27,14 @@ export default function Navbar() {
     return saved ? parseInt(saved) : null;
   });
 
-  const [user, setUser] = useState<{ 
-    name: string; 
-    isFamily: boolean; 
+  const [user, setUser] = useState<{
+    name: string;
+    isFamily: boolean;
     members?: string[];
     hasVisited: boolean;
     wantToBeChristian: boolean;
     previousChurch: string;
+    role?: string;
   } | null>(() => {
     const saved = localStorage.getItem('church_user_data');
     return saved ? JSON.parse(saved) : null;
@@ -48,7 +50,7 @@ export default function Navbar() {
 
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('user_data_updated', handleStorageChange);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('user_data_updated', handleStorageChange);
@@ -81,10 +83,10 @@ export default function Navbar() {
 
   const navItems = isWordLight ? [
     { name: t('home'), id: 'home', href: '#home', icon: Home },
-    { 
-      name: t('media'), 
-      id: 'media', 
-      href: '#live', 
+    {
+      name: t('media'),
+      id: 'media',
+      href: '#live',
       icon: Radio,
       dropdown: [
         { name: t('live'), href: '#live' },
@@ -92,10 +94,10 @@ export default function Navbar() {
         { name: t('photoGallery'), href: '#gallery' },
       ]
     },
-    { 
-      name: t('philosophy'), 
-      id: 'aboutUs', 
-      href: '#about', 
+    {
+      name: t('philosophy'),
+      id: 'aboutUs',
+      href: '#about',
       icon: Info,
       dropdown: [
         { name: t('ourHistory'), href: '#history' },
@@ -106,10 +108,10 @@ export default function Navbar() {
         { name: 'Volunteer', href: '/volunteer' },
       ]
     },
-    { 
-      name: t('services'), 
-      id: 'services', 
-      href: '#services', 
+    {
+      name: t('services'),
+      id: 'services',
+      href: '#services',
       icon: Calendar,
       dropdown: [
         { name: t('mainServices'), href: '#services' },
@@ -124,10 +126,10 @@ export default function Navbar() {
     { name: t('branches'), id: 'branches', href: '#branches', icon: Map },
   ] : [
     { name: t('home'), id: 'home', href: '#home', icon: Home },
-    { 
-      name: t('media'), 
-      id: 'media', 
-      href: '#live', 
+    {
+      name: t('media'),
+      id: 'media',
+      href: '#live',
       icon: Radio,
       dropdown: [
         { name: t('live'), href: '#live' },
@@ -135,10 +137,10 @@ export default function Navbar() {
         { name: t('photoGallery'), href: '#gallery' },
       ]
     },
-    { 
-      name: t('services'), 
-      id: 'services', 
-      href: '#services', 
+    {
+      name: t('services'),
+      id: 'services',
+      href: '#services',
       icon: Calendar,
       dropdown: [
         { name: t('mainServices'), href: '#services' },
@@ -151,10 +153,10 @@ export default function Navbar() {
     { name: t('bibleStudy'), id: 'bibleStudy', href: '/bible-study', icon: BookOpen },
     { name: t('branches'), id: 'branches', href: '#branches', icon: Map },
     { name: t('volunteer'), id: 'volunteer', href: '#volunteer', icon: Heart },
-    { 
-      name: t('aboutUs'), 
-      id: 'aboutUs', 
-      href: '#about', 
+    {
+      name: t('aboutUs'),
+      id: 'aboutUs',
+      href: '#about',
       icon: Info,
       dropdown: [
         { name: t('ourHistory'), href: '#history' },
@@ -178,9 +180,9 @@ export default function Navbar() {
 
   const currentLang = languages.find(l => l.code === language) || languages[0];
   const [langOpen, setLangOpen] = useState(false);
-  const [churchProfile, setChurchProfile] = useState({ 
-    logo: '/logo.jpg', 
-    name: 'Foursquare Church', 
+  const [churchProfile, setChurchProfile] = useState({
+    logo: '/logo.jpg',
+    name: 'Foursquare Church',
     tagline: 'CityLight Church',
     wordlightLogo: '/logo.jpg',
     citylightLogo: '/logo.jpg'
@@ -190,7 +192,6 @@ export default function Navbar() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const { api } = await import('../lib/api');
         const profile = await api.getChurchProfile();
         setChurchProfile(profile);
       } catch (err) {
@@ -204,22 +205,22 @@ export default function Navbar() {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4',
-        scrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg py-3 border-b border-blue-100' 
+        scrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-lg py-3 border-b border-blue-100'
           : 'bg-white/80 backdrop-blur-sm'
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-2 shrink-0 cursor-pointer group"
           onClick={() => user?.role === 'admin' && setShowProfileModal(true)}
         >
           <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl overflow-hidden flex items-center justify-center bg-white shadow-md relative group-hover:ring-2 group-hover:ring-blue-400 transition-all">
-            <img 
-              src={isWordLight ? (churchProfile.wordlightLogo || churchProfile.logo) : (churchProfile.citylightLogo || churchProfile.logo)} 
-              alt="Church Logo" 
+            <img
+              src={isWordLight ? (churchProfile.wordlightLogo || churchProfile.logo) : (churchProfile.citylightLogo || churchProfile.logo)}
+              alt="Church Logo"
               className="w-full h-full object-cover"
             />
             {user?.role === 'admin' && (
@@ -239,7 +240,7 @@ export default function Navbar() {
         </motion.div>
 
         <div className="md:hidden flex items-center gap-2">
-          <motion.button 
+          <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsSearchOpen(true)}
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 shadow-sm"
@@ -247,7 +248,7 @@ export default function Navbar() {
             <Search size={20} />
           </motion.button>
 
-          <motion.button 
+          <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setLangOpen(!langOpen)}
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 text-purple-600 text-xs font-bold shadow-sm"
@@ -269,8 +270,8 @@ export default function Navbar() {
                   transition={{ delay: i * 0.05, type: "spring", stiffness: 300 }}
                   className={cn(
                     "text-[10px] lg:text-xs xl:text-sm font-medium transition-all relative group px-2 lg:px-2.5 xl:px-3 py-2 whitespace-nowrap text-center flex items-center gap-1",
-                    activeItem === item.id 
-                      ? "text-[#1877f2]" 
+                    activeItem === item.id
+                      ? "text-[#1877f2]"
                       : "text-gray-700 hover:text-[#1877f2]"
                   )}
                 >
@@ -315,12 +316,12 @@ export default function Navbar() {
 
 
           <div className="relative">
-            <button 
+            <button
               onClick={() => setLangOpen(!langOpen)}
               className={cn(
                 "flex items-center justify-center gap-1.5 text-xs font-bold transition-all px-3 py-2 rounded-lg shadow-sm ring-1",
-                langOpen 
-                  ? "bg-[#1877f2] text-white ring-blue-500" 
+                langOpen
+                  ? "bg-[#1877f2] text-white ring-blue-500"
                   : "bg-white text-gray-700 ring-gray-200 hover:ring-blue-500"
               )}
             >
@@ -328,7 +329,7 @@ export default function Navbar() {
               <span className="uppercase tracking-wider">{currentLang.code}</span>
               <ChevronDown size={12} className={cn("transition-transform duration-300", langOpen ? "rotate-180" : "")} />
             </button>
-            
+
             <AnimatePresence>
               {langOpen && (
                 <motion.div
@@ -354,8 +355,8 @@ export default function Navbar() {
                       }}
                       className={cn(
                         "w-full text-left px-4 py-3 text-sm transition-all flex items-center justify-between group",
-                        language === lang.code 
-                          ? "bg-blue-50 text-[#1877f2] font-bold" 
+                        language === lang.code
+                          ? "bg-blue-50 text-[#1877f2] font-bold"
                           : "text-gray-700 hover:bg-gray-50 hover:text-[#1877f2]"
                       )}
                     >
@@ -441,8 +442,8 @@ export default function Navbar() {
                     }}
                     className={cn(
                       "flex items-center justify-between font-medium transition-colors py-2",
-                      activeItem === item.id 
-                        ? "text-[#1877f2]" 
+                      activeItem === item.id
+                        ? "text-[#1877f2]"
                         : "text-gray-700 hover:text-[#1877f2]"
                     )}
                   >
@@ -452,7 +453,7 @@ export default function Navbar() {
                     </div>
                     {'dropdown' in item && <ChevronDown size={14} />}
                   </a>
-                  
+
                   {'dropdown' in item && (
                     <div className="pl-8 flex flex-col gap-2 border-l border-gray-100 ml-2">
                       {item.dropdown?.map((sub, idx) => (
@@ -472,7 +473,7 @@ export default function Navbar() {
                   )}
                 </div>
               ))}
-              <button 
+              <button
                 onClick={() => {
                   setIsOpen(false);
                   setIsQuizOpen(true);
@@ -493,14 +494,14 @@ export default function Navbar() {
 
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
-      <ChurchQuiz 
+      <ChurchQuiz
         isOpen={isQuizOpen}
         onClose={() => setIsQuizOpen(false)}
         onComplete={(score) => setQuizScore(score)}
       />
 
       {showProfileModal && (
-        <ProfileImageModal 
+        <ProfileImageModal
           isOpen={showProfileModal}
           onClose={() => setShowProfileModal(false)}
           currentProfile={churchProfile}
@@ -536,19 +537,18 @@ function ProfileImageModal({ isOpen, onClose, currentProfile, onUpdate }: any) {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const { api } = await import('../lib/api');
-      const result = await api.updateChurchProfile({ 
+      const result = await api.updateChurchProfile({
         citylightLogo: citylightLogo || currentProfile.citylightLogo,
         wordlightLogo: wordlightLogo || currentProfile.wordlightLogo,
-        name, 
-        tagline 
+        name,
+        tagline
       });
       if (result.success) {
-        onUpdate({ 
+        onUpdate({
           citylightLogo: result.citylightLogo || citylightLogo,
           wordlightLogo: result.wordlightLogo || wordlightLogo,
-          name, 
-          tagline 
+          name,
+          tagline
         });
       }
     } catch (err) {
@@ -575,7 +575,7 @@ function ProfileImageModal({ isOpen, onClose, currentProfile, onUpdate }: any) {
             className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
           >
             <h3 className="text-2xl font-bold mb-6">Update Church Profile</h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold mb-2">CityLight Logo</label>
@@ -584,7 +584,7 @@ function ProfileImageModal({ isOpen, onClose, currentProfile, onUpdate }: any) {
                   <img src={citylightLogo || currentProfile.citylightLogo} alt="CityLight" className="mt-2 w-24 h-24 object-cover rounded-xl" />
                 )}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold mb-2">WordLight Logo</label>
                 <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'wordlight')} className="w-full text-sm" />
@@ -592,7 +592,7 @@ function ProfileImageModal({ isOpen, onClose, currentProfile, onUpdate }: any) {
                   <img src={wordlightLogo || currentProfile.wordlightLogo} alt="WordLight" className="mt-2 w-24 h-24 object-cover rounded-xl" />
                 )}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold mb-2">Church Name</label>
                 <input
@@ -602,7 +602,7 @@ function ProfileImageModal({ isOpen, onClose, currentProfile, onUpdate }: any) {
                   className="w-full px-4 py-2 border-2 rounded-xl focus:border-blue-500 outline-none"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold mb-2">Tagline</label>
                 <input

@@ -4,6 +4,7 @@ import { Heart, Users, Star, Clock, MapPin, Mail, Phone, User, CheckCircle, Send
 import { useTranslation } from '../context/LanguageContext';
 import { useSite } from '../context/SiteContext';
 import { cn } from '../lib/utils';
+import { api } from '../lib/api';
 
 const ministries = [
   { id: 'worship', name: 'Worship Team', description: 'Use your musical gifts to lead the congregation in praise' },
@@ -40,7 +41,6 @@ export default function Volunteer() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { api } = await import('../lib/api');
       await api.createVolunteerRequest(formData);
       setSubmitted(true);
     } catch (error) {
@@ -164,7 +164,7 @@ export default function Volunteer() {
             ) : (
               <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-[3rem] p-8 md:p-12 border border-slate-100 dark:border-slate-700">
                 <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">{t('volunteerForm')}</h3>
-                
+
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
@@ -285,8 +285,8 @@ export default function Volunteer() {
                     type="submit"
                     className={cn(
                       "w-full py-4 rounded-2xl font-bold text-white transition-all flex items-center justify-center gap-2",
-                      isWordLight 
-                        ? "bg-purple-600 hover:bg-purple-700" 
+                      isWordLight
+                        ? "bg-purple-600 hover:bg-purple-700"
                         : "bg-emerald-600 hover:bg-emerald-700"
                     )}
                   >
