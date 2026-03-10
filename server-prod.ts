@@ -13,7 +13,7 @@ app.use(express.json({ limit: '50mb' }));
 // Turso database connection
 const turso = createClient({
   url: process.env.TURSO_DATABASE_URL || "libsql://database-aero-anchor-vercel-icfg-vpe4oceodpjzojyz3srl4xrd.aws-us-east-1.turso.io",
-  authToken: process.env.TURSO_AUTH_TOKEN || "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzI5ODg3MzEsImlkIjoiMDE5Y2NlNWQtMGQwMS03ODc5LWI2Y2YtZDM2NjVhNmNjN2U2IiwicmlkIjoiZDM1NjhiZDUtNzFlMy00YzgxLWJkNGItNjRjNGQyZGMxOTBmIn0.EO5dPKY74985JBpl8bsOJl50Riy66qYf9kpu1eBIoTuVM9iEhMmKmsqZ2bpXMXYl-JMKe3QVXHU7ZSL9DUy9DA",
+  authToken: process.env.TURSO_AUTH_TOKEN || "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzMxMjY1MzksImlkIjoiMDE5Y2NlNWQtMGQwMS03ODc5LWI2Y2YtZDM2NjVhNmNjN2U2IiwicmlkIjoiZDM1NjhiZDUtNzFlMy00YzgxLWJkNGItNjRjNGQyZGMxOTBmIn0.fzoAvS1xGeswNHoUNrvf92uZIbgO9rVrjVrd_GhJfVkJZ28DXCcrc1B4anWpd-q6N4Z-E-Cm6DnKXllfqQx9Dw",
 });
 
 // CORS
@@ -58,16 +58,16 @@ app.post('/api/auth/register', async (req, res) => {
       sql: 'SELECT id FROM users WHERE email = ?',
       args: [email]
     });
-    
+
     if (existing.rows.length > 0) {
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
-    
+
     const result = await turso.execute({
       sql: 'INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)',
       args: [email, password, name, 'user']
     });
-    
+
     res.json({ success: true, userId: result.lastInsertRowid });
   } catch (error: any) {
     console.error('Register error:', error);
@@ -282,10 +282,10 @@ app.get('/api/church-profile', async (req, res) => {
   } catch {
     // Fall through to default
   }
-  res.json({ 
-    logo: '/logo.jpg', 
-    name: 'Foursquare Church', 
-    tagline: 'CityLight Church' 
+  res.json({
+    logo: '/logo.jpg',
+    name: 'Foursquare Church',
+    tagline: 'CityLight Church'
   });
 });
 
@@ -365,7 +365,7 @@ app.post('/api/volunteer-requests', async (req, res) => {
         full_name, email, phone, address, ministry, availability, why_volunteer, status
       ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending') RETURNING id`,
       args: [
-        data.fullName, data.email, data.phone, data.address, 
+        data.fullName, data.email, data.phone, data.address,
         data.ministry, data.availability, data.why
       ]
     });
@@ -819,7 +819,7 @@ app.get('/api/search', async (req, res) => {
 app.post('/api/upload', async (req, res) => {
   const { file, folder, resource_type } = req.body;
   try {
-    const result = await cloudinary.uploader.upload(file, { 
+    const result = await cloudinary.uploader.upload(file, {
       folder: folder || 'uploads',
       resource_type: resource_type || 'auto'
     });

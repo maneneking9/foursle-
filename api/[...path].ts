@@ -1,15 +1,15 @@
 import { createClient } from '@libsql/client';
 
 const turso = createClient({
-  url: process.env.TURSO_DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN!,
+  url: process.env.TURSO_DATABASE_URL || "libsql://database-aero-anchor-vercel-icfg-vpe4oceodpjzojyz3srl4xrd.aws-us-east-1.turso.io",
+  authToken: process.env.TURSO_AUTH_TOKEN || "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzMxMjY1MzksImlkIjoiMDE5Y2NlNWQtMGQwMS03ODc5LWI2Y2YtZDM2NjVhNmNjN2U2IiwicmlkIjoiZDM1NjhiZDUtNzFlMy00YzgxLWJkNGItNjRjNGQyZGMxOTBmIn0.fzoAvS1xGeswNHoUNrvf92uZIbgO9rVrjVrd_GhJfVkJZ28DXCcrc1B4anWpd-q6N4Z-E-Cm6DnKXllfqQx9Dw",
 });
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -25,7 +25,7 @@ export default async function handler(req: any, res: any) {
         sql: 'SELECT * FROM users WHERE email = ? AND password = ?',
         args: [email, password]
       });
-      
+
       if (result.rows.length > 0) {
         const user = result.rows[0];
         await turso.execute({
@@ -43,16 +43,16 @@ export default async function handler(req: any, res: any) {
         sql: 'SELECT id FROM users WHERE email = ?',
         args: [email]
       });
-      
+
       if (existing.rows.length > 0) {
         return res.status(400).json({ success: false, message: 'Email already registered' });
       }
-      
+
       const result = await turso.execute({
         sql: 'INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?) RETURNING id',
         args: [email, password, name, 'user']
       });
-      
+
       return res.json({ success: true, userId: result.rows[0].id });
     }
 
@@ -110,9 +110,9 @@ export default async function handler(req: any, res: any) {
       if (result.rows.length > 0) {
         return res.json(JSON.parse(result.rows[0].value as string));
       }
-      return res.json({ 
-        logo: '/logo.jpg', 
-        name: 'Foursquare Church', 
+      return res.json({
+        logo: '/logo.jpg',
+        name: 'Foursquare Church',
         tagline: 'CityLight Church',
         citylightLogo: '/logo.jpg',
         wordlightLogo: '/logo.jpg'
@@ -199,7 +199,7 @@ export default async function handler(req: any, res: any) {
     if (route === '/upload' && req.method === 'POST') {
       const { file, folder, resource_type } = req.body;
       if (!file) return res.status(400).json({ error: 'No file provided' });
-      
+
       // Return the base64 as-is for now (will be uploaded to Cloudinary by admin endpoint)
       return res.json({ url: file });
     }

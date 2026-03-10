@@ -2,8 +2,8 @@ import { createClient } from '@libsql/client';
 import { v2 as cloudinary } from 'cloudinary';
 
 const turso = createClient({
-  url: process.env.TURSO_DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN!,
+  url: process.env.TURSO_DATABASE_URL || "libsql://database-aero-anchor-vercel-icfg-vpe4oceodpjzojyz3srl4xrd.aws-us-east-1.turso.io",
+  authToken: process.env.TURSO_AUTH_TOKEN || "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzMxMjY1MzksImlkIjoiMDE5Y2NlNWQtMGQwMS03ODc5LWI2Y2YtZDM2NjVhNmNjN2U2IiwicmlkIjoiZDM1NjhiZDUtNzFlMy00YzgxLWJkNGItNjRjNGQyZGMxOTBmIn0.fzoAvS1xGeswNHoUNrvf92uZIbgO9rVrjVrd_GhJfVkJZ28DXCcrc1B4anWpd-q6N4Z-E-Cm6DnKXllfqQx9Dw",
 });
 
 cloudinary.config({
