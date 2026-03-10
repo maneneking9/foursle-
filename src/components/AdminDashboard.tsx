@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, Calendar, Video, MessageSquare, Users, Bell, Image, 
-  MapPin, BookOpen, Settings, LogOut, Plus, Edit2, Trash2, X, 
+import {
+  LayoutDashboard, Calendar, Video, MessageSquare, Users, Bell, Image,
+  MapPin, BookOpen, Settings, LogOut, Plus, Edit2, Trash2, X,
   Upload, Eye, Check, ChevronRight, Home, UserPlus, Church, Search,
   BarChart3, Mail, Phone, Clock, Save, RefreshCw, User, UserCheck, HeartHandshake
 } from 'lucide-react';
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  
+
   // Data states
   const [stats, setStats] = useState<Stats>({ totalMembers: 0, totalEvents: 0, totalSermons: 0, totalPrayers: 0 });
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -246,7 +246,11 @@ export default function AdminDashboard() {
           await api.createAnnouncement(formData);
           break;
         case 'gallery':
-          await api.createGalleryImage(formData);
+          if (editingItem?.id) {
+            await api.updateGalleryImage(editingItem.id, formData);
+          } else {
+            await api.createGalleryImage(formData);
+          }
           break;
         case 'testimonies':
           if (editingItem?.id) {
@@ -336,7 +340,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-100 flex">
       {/* Sidebar */}
-      <motion.aside 
+      <motion.aside
         initial={false}
         animate={{ width: sidebarOpen ? 280 : 80 }}
         className="bg-gradient-to-b from-blue-900 to-blue-800 text-white flex flex-col"
@@ -345,7 +349,7 @@ export default function AdminDashboard() {
         <div className="p-4 flex items-center justify-between border-b border-blue-700">
           <AnimatePresence>
             {sidebarOpen && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -372,14 +376,13 @@ export default function AdminDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveSection(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-white/10 transition-colors ${
-                activeSection === item.id ? 'bg-white/20 border-r-4 border-white' : ''
-              }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-white/10 transition-colors ${activeSection === item.id ? 'bg-white/20 border-r-4 border-white' : ''
+                }`}
             >
               <item.icon size={22} />
               <AnimatePresence>
                 {sidebarOpen && (
-                  <motion.span 
+                  <motion.span
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -401,7 +404,7 @@ export default function AdminDashboard() {
             </div>
             <AnimatePresence>
               {sidebarOpen && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -415,9 +418,8 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={handleLogout}
-            className={`mt-3 w-full flex items-center gap-3 px-4 py-2 hover:bg-red-500/20 text-red-200 hover:text-red-100 rounded transition-colors ${
-              !sidebarOpen && 'justify-center'
-            }`}
+            className={`mt-3 w-full flex items-center gap-3 px-4 py-2 hover:bg-red-500/20 text-red-200 hover:text-red-100 rounded transition-colors ${!sidebarOpen && 'justify-center'
+              }`}
           >
             <LogOut size={20} />
             <AnimatePresence>
@@ -441,7 +443,7 @@ export default function AdminDashboard() {
             <button onClick={loadData} className="p-2 hover:bg-gray-100 rounded-lg">
               <RefreshCw size={20} className={`text-gray-600 ${loading ? 'animate-spin' : ''}`} />
             </button>
-            <button 
+            <button
               onClick={() => openModal()}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -515,15 +517,14 @@ export default function AdminDashboard() {
                   {branches.map((branch) => (
                     <div key={branch.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                       <div className="h-40 bg-gradient-to-br from-blue-500 to-purple-600 relative">
-                        <img 
-                          src={branch.image_url || '/images/branch/Screenshot 2026-03-07 154024.png'} 
+                        <img
+                          src={branch.image_url || '/images/branch/Screenshot 2026-03-07 154024.png'}
                           alt={branch.name}
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute top-3 right-3">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            branch.is_active ? 'bg-green-500' : 'bg-gray-500'
-                          } text-white`}>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${branch.is_active ? 'bg-green-500' : 'bg-gray-500'
+                            } text-white`}>
                             {branch.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </div>
@@ -537,13 +538,13 @@ export default function AdminDashboard() {
                           <p className="flex items-center gap-2"><Users size={14} /> {branch.worshippers} worshippers</p>
                         </div>
                         <div className="flex gap-2 mt-4">
-                          <button 
+                          <button
                             onClick={() => openModal(branch)}
                             className="flex-1 flex items-center justify-center gap-2 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100"
                           >
                             <Edit2 size={16} /> Edit
                           </button>
-                          <button 
+                          <button
                             onClick={() => handleDelete(branch.id, 'branch')}
                             className="flex-1 flex items-center justify-center gap-2 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
                           >
@@ -578,9 +579,8 @@ export default function AdminDashboard() {
                             <img src={slide.image_url} alt={slide.title} className="w-20 h-12 object-cover rounded" />
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              slide.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                            }`}>
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${slide.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                              }`}>
                               {slide.active ? 'Active' : 'Inactive'}
                             </span>
                           </td>
@@ -693,9 +693,8 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 font-medium">{testimony.title}</td>
                           <td className="px-6 py-4 max-w-xs truncate">{testimony.content}</td>
                           <td className="px-6 py-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              testimony.approved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                            }`}>
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${testimony.approved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                              }`}>
                               {testimony.approved ? 'Approved' : 'Pending'}
                             </span>
                           </td>
@@ -800,7 +799,7 @@ export default function AdminDashboard() {
                       {membershipRequests.length} requests
                     </span>
                   </div>
-                  
+
                   {membershipRequests.length === 0 ? (
                     <p className="text-gray-500 text-center py-8">No membership requests yet</p>
                   ) : (
@@ -825,11 +824,10 @@ export default function AdminDashboard() {
                               <td className="px-4 py-3">{request.phone_number}</td>
                               <td className="px-4 py-3">{request.ministry || 'N/A'}</td>
                               <td className="px-4 py-3">
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  request.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                  request.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                  'bg-red-100 text-red-700'
-                                }`}>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${request.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                    request.status === 'approved' ? 'bg-green-100 text-green-700' :
+                                      'bg-red-100 text-red-700'
+                                  }`}>
                                   {request.status}
                                 </span>
                               </td>
@@ -837,7 +835,7 @@ export default function AdminDashboard() {
                                 {new Date(request.created_at).toLocaleDateString()}
                               </td>
                               <td className="px-4 py-3">
-                                <button 
+                                <button
                                   onClick={() => alert(`Full Details:\n${JSON.stringify(request, null, 2)}`)}
                                   className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                 >
@@ -862,7 +860,7 @@ export default function AdminDashboard() {
                       {volunteerRequests.length} requests
                     </span>
                   </div>
-                  
+
                   {volunteerRequests.length === 0 ? (
                     <p className="text-gray-500 text-center py-8">No volunteer requests yet</p>
                   ) : (
@@ -889,11 +887,10 @@ export default function AdminDashboard() {
                               <td className="px-4 py-3">{request.ministry}</td>
                               <td className="px-4 py-3">{request.availability || 'N/A'}</td>
                               <td className="px-4 py-3">
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  request.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                  request.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                  'bg-red-100 text-red-700'
-                                }`}>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${request.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                    request.status === 'approved' ? 'bg-green-100 text-green-700' :
+                                      'bg-red-100 text-red-700'
+                                  }`}>
                                   {request.status}
                                 </span>
                               </td>
@@ -902,7 +899,7 @@ export default function AdminDashboard() {
                               </td>
                               <td className="px-4 py-3">
                                 <div className="flex gap-2">
-                                  <button 
+                                  <button
                                     onClick={() => alert(`Full Details:\n${JSON.stringify(request, null, 2)}`)}
                                     className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                   >
@@ -910,10 +907,10 @@ export default function AdminDashboard() {
                                   </button>
                                   {request.status === 'pending' && (
                                     <>
-                                      <button 
+                                      <button
                                         onClick={async () => {
                                           await api.updateVolunteerRequest(request.id, 'approved');
-                                          setVolunteerRequests(volunteerRequests.map((r: any) => 
+                                          setVolunteerRequests(volunteerRequests.map((r: any) =>
                                             r.id === request.id ? { ...r, status: 'approved' } : r
                                           ));
                                         }}
@@ -921,10 +918,10 @@ export default function AdminDashboard() {
                                       >
                                         Approve
                                       </button>
-                                      <button 
+                                      <button
                                         onClick={async () => {
                                           await api.updateVolunteerRequest(request.id, 'rejected');
-                                          setVolunteerRequests(volunteerRequests.map((r: any) => 
+                                          setVolunteerRequests(volunteerRequests.map((r: any) =>
                                             r.id === request.id ? { ...r, status: 'rejected' } : r
                                           ));
                                         }}
@@ -961,32 +958,32 @@ export default function AdminDashboard() {
                   <div className="space-y-6 max-w-2xl">
                     <div>
                       <label className="block text-sm font-medium mb-2">Church Name</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Foursquare Church"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Tagline</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="CityLight Church"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Contact Email</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="info@foursquare.rw"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Contact Phone</label>
-                      <input 
-                        type="tel" 
+                      <input
+                        type="tel"
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="+250 788 123 456"
                       />
@@ -1005,14 +1002,14 @@ export default function AdminDashboard() {
       {/* Modal */}
       <AnimatePresence>
         {showModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
             onClick={() => setShowModal(false)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -1033,30 +1030,30 @@ export default function AdminDashboard() {
                   <>
                     <div>
                       <label className="block text-sm font-medium mb-2">Branch Name</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.name || ''}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="e.g., Foursquare City Light"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Slug</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.slug || ''}
-                        onChange={(e) => setFormData({...formData, slug: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="e.g., citylight"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Address</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.address || ''}
-                        onChange={(e) => setFormData({...formData, address: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="Kigali, Kimironko, Rwanda"
                       />
@@ -1064,20 +1061,20 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2">Phone</label>
-                        <input 
-                          type="tel" 
+                        <input
+                          type="tel"
                           value={formData.phone || ''}
-                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                           placeholder="+250 788 123 456"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-2">Email</label>
-                        <input 
-                          type="email" 
+                        <input
+                          type="email"
                           value={formData.email || ''}
-                          onChange={(e) => setFormData({...formData, email: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                           placeholder="citylight@foursquare.rw"
                         />
@@ -1085,19 +1082,19 @@ export default function AdminDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Pastor</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.pastor || ''}
-                        onChange={(e) => setFormData({...formData, pastor: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, pastor: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="Rev. Roger Brubeck"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Description</label>
-                      <textarea 
+                      <textarea
                         value={formData.description || ''}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         rows={3}
                         placeholder="Describe this branch..."
@@ -1105,9 +1102,9 @@ export default function AdminDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Mission</label>
-                      <textarea 
+                      <textarea
                         value={formData.mission || ''}
-                        onChange={(e) => setFormData({...formData, mission: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, mission: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         rows={2}
                         placeholder="Mission statement..."
@@ -1115,9 +1112,9 @@ export default function AdminDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">History</label>
-                      <textarea 
+                      <textarea
                         value={formData.history || ''}
-                        onChange={(e) => setFormData({...formData, history: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, history: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         rows={2}
                         placeholder="Brief history..."
@@ -1125,20 +1122,20 @@ export default function AdminDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Image URL</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.image_url || ''}
-                        onChange={(e) => setFormData({...formData, image_url: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="https://..."
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Worshippers</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.worshippers || ''}
-                        onChange={(e) => setFormData({...formData, worshippers: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, worshippers: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="e.g., 2,500+"
                       />
@@ -1151,19 +1148,19 @@ export default function AdminDashboard() {
                   <>
                     <div>
                       <label className="block text-sm font-medium mb-2">Title</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.title || ''}
-                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Subtitle</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.subtitle || ''}
-                        onChange={(e) => setFormData({...formData, subtitle: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
@@ -1171,16 +1168,16 @@ export default function AdminDashboard() {
                       <label className="block text-sm font-medium mb-2">Upload Image</label>
                       <ImageUpload
                         value={formData.image || formData.image_url || ''}
-                        onChange={(url) => setFormData({...formData, image: url, image_url: url})}
+                        onChange={(url) => setFormData({ ...formData, image: url, image_url: url })}
                         label=""
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Order</label>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         value={formData.order_index || formData.order || 0}
-                        onChange={(e) => setFormData({...formData, order_index: parseInt(e.target.value)})}
+                        onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
@@ -1192,18 +1189,18 @@ export default function AdminDashboard() {
                   <>
                     <div>
                       <label className="block text-sm font-medium mb-2">Title</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.title || ''}
-                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Description</label>
-                      <textarea 
+                      <textarea
                         value={formData.description || ''}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                         rows={3}
                       />
@@ -1211,26 +1208,26 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2">Date</label>
-                        <input 
-                          type="date" 
+                        <input
+                          type="date"
                           value={formData.date ? formData.date.split('T')[0] : ''}
-                          onChange={(e) => setFormData({...formData, date: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                           className="w-full px-4 py-2 border rounded-lg"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-2">Location</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={formData.location || ''}
-                          onChange={(e) => setFormData({...formData, location: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                           className="w-full px-4 py-2 border rounded-lg"
                         />
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Upload Image</label>
-                      <input 
+                      <input
                         type="file"
                         accept="image/*"
                         onChange={(e) => {
@@ -1238,7 +1235,7 @@ export default function AdminDashboard() {
                           if (file) {
                             const reader = new FileReader();
                             reader.onloadend = () => {
-                              setFormData({...formData, image: reader.result as string});
+                              setFormData({ ...formData, image: reader.result as string });
                             };
                             reader.readAsDataURL(file);
                           }
@@ -1255,18 +1252,18 @@ export default function AdminDashboard() {
                   <>
                     <div>
                       <label className="block text-sm font-medium mb-2">Title</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.title || ''}
-                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Description</label>
-                      <textarea 
+                      <textarea
                         value={formData.description || ''}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                         rows={3}
                       />
@@ -1274,39 +1271,39 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2">Speaker</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={formData.speaker || ''}
-                          onChange={(e) => setFormData({...formData, speaker: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, speaker: e.target.value })}
                           className="w-full px-4 py-2 border rounded-lg"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-2">Date</label>
-                        <input 
-                          type="date" 
+                        <input
+                          type="date"
                           value={formData.date ? formData.date.split('T')[0] : ''}
-                          onChange={(e) => setFormData({...formData, date: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                           className="w-full px-4 py-2 border rounded-lg"
                         />
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Scripture</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.scripture || ''}
-                        onChange={(e) => setFormData({...formData, scripture: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, scripture: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                         placeholder="e.g., John 3:16"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Video URL</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.video_url || ''}
-                        onChange={(e) => setFormData({...formData, video_url: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
@@ -1318,18 +1315,18 @@ export default function AdminDashboard() {
                   <>
                     <div>
                       <label className="block text-sm font-medium mb-2">Group Name</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.name || ''}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Description</label>
-                      <textarea 
+                      <textarea
                         value={formData.description || ''}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                         rows={3}
                       />
@@ -1337,20 +1334,20 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2">Meeting Time</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={formData.meeting_time || ''}
-                          onChange={(e) => setFormData({...formData, meeting_time: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, meeting_time: e.target.value })}
                           className="w-full px-4 py-2 border rounded-lg"
                           placeholder="Sunday 10:00 AM"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-2">Location</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={formData.location || ''}
-                          onChange={(e) => setFormData({...formData, location: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                           className="w-full px-4 py-2 border rounded-lg"
                         />
                       </div>
@@ -1363,18 +1360,18 @@ export default function AdminDashboard() {
                   <>
                     <div>
                       <label className="block text-sm font-medium mb-2">Title</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.title || ''}
-                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Content</label>
-                      <textarea 
+                      <textarea
                         value={formData.content || ''}
-                        onChange={(e) => setFormData({...formData, content: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                         rows={5}
                       />
@@ -1387,16 +1384,16 @@ export default function AdminDashboard() {
                   <>
                     <div>
                       <label className="block text-sm font-medium mb-2">Title</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.title || ''}
-                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Upload Image</label>
-                      <input 
+                      <input
                         type="file"
                         accept="image/*"
                         onChange={(e) => {
@@ -1404,7 +1401,7 @@ export default function AdminDashboard() {
                           if (file) {
                             const reader = new FileReader();
                             reader.onloadend = () => {
-                              setFormData({...formData, image: reader.result as string});
+                              setFormData({ ...formData, image: reader.result as string });
                             };
                             reader.readAsDataURL(file);
                           }
@@ -1415,10 +1412,10 @@ export default function AdminDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Category</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.category || ''}
-                        onChange={(e) => setFormData({...formData, category: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                         className="w-full px-4 py-2 border rounded-lg"
                         placeholder="e.g., Sunday Service, Youth, Events"
                       />
@@ -1427,13 +1424,13 @@ export default function AdminDashboard() {
                 )}
               </div>
               <div className="p-6 border-t flex justify-end gap-3 sticky bottom-0 bg-white">
-                <button 
+                <button
                   onClick={() => setShowModal(false)}
                   className="px-6 py-2 border rounded-lg hover:bg-gray-50"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handleSave}
                   disabled={loading}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"

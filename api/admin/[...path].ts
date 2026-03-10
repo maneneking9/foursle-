@@ -16,7 +16,7 @@ export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -29,17 +29,17 @@ export default async function handler(req: any, res: any) {
     if (route === '/hero-slides' && req.method === 'POST') {
       const { title, subtitle, image, order_index } = req.body;
       let imageUrl = image;
-      
+
       if (image && image.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(image, { folder: 'hero' });
         imageUrl = result.secure_url;
       }
-      
+
       const result = await turso.execute({
         sql: 'INSERT INTO hero_slides (image_url, title, subtitle, order_index) VALUES (?, ?, ?, ?) RETURNING id',
         args: [imageUrl, title, subtitle, order_index || 0]
       });
-      
+
       return res.json({ id: result.rows[0].id, image_url: imageUrl });
     }
 
@@ -56,17 +56,17 @@ export default async function handler(req: any, res: any) {
     if (route === '/events' && req.method === 'POST') {
       const { title, description, date, location, image } = req.body;
       let imageUrl = image;
-      
+
       if (image && image.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(image, { folder: 'events' });
         imageUrl = result.secure_url;
       }
-      
+
       const result = await turso.execute({
         sql: 'INSERT INTO events (title, description, date, location, image_url) VALUES (?, ?, ?, ?, ?) RETURNING id',
         args: [title, description, date, location, imageUrl]
       });
-      
+
       return res.json({ id: result.rows[0].id, image_url: imageUrl });
     }
 
@@ -83,22 +83,22 @@ export default async function handler(req: any, res: any) {
     if (route === '/sermons' && req.method === 'POST') {
       const { title, description, video, audio, speaker, date, scripture } = req.body;
       let videoUrl = null, audioUrl = null;
-      
+
       if (video && video.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(video, { folder: 'sermons', resource_type: 'video' });
         videoUrl = result.secure_url;
       }
-      
+
       if (audio && audio.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(audio, { folder: 'sermons', resource_type: 'video' });
         audioUrl = result.secure_url;
       }
-      
+
       const result = await turso.execute({
         sql: 'INSERT INTO sermons (title, description, video_url, audio_url, speaker, date, scripture) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id',
         args: [title, description, videoUrl, audioUrl, speaker, date, scripture]
       });
-      
+
       return res.json({ id: result.rows[0].id });
     }
 
@@ -106,18 +106,35 @@ export default async function handler(req: any, res: any) {
     if (route === '/gallery' && req.method === 'POST') {
       const { title, image, category } = req.body;
       let imageUrl = image;
-      
+
       if (image && image.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(image, { folder: 'gallery' });
         imageUrl = result.secure_url;
       }
-      
+
       const dbResult = await turso.execute({
         sql: 'INSERT INTO gallery_images (title, image_url, category) VALUES (?, ?, ?) RETURNING id',
         args: [title, imageUrl, category]
       });
-      
+
       return res.json({ id: dbResult.rows[0].id, image_url: imageUrl });
+    }
+
+    if (route.startsWith('/gallery/') && req.method === 'PUT') {
+      const id = route.split('/')[2];
+      const { title, image, category } = req.body;
+      let imageUrl = image;
+
+      if (image && image.startsWith('data:')) {
+        const result = await cloudinary.uploader.upload(image, { folder: 'gallery' });
+        imageUrl = result.secure_url;
+      }
+
+      await turso.execute({
+        sql: 'UPDATE gallery_images SET title = ?, image_url = COALESCE(?, image_url), category = ? WHERE id = ?',
+        args: [title, imageUrl || null, category, id]
+      });
+      return res.json({ success: true });
     }
 
     if (route.startsWith('/gallery/') && req.method === 'DELETE') {
@@ -182,17 +199,17 @@ export default async function handler(req: any, res: any) {
       const { title, description, video, thumbnail, category } = req.body;
       let videoUrl = video;
       let thumbnailUrl = thumbnail;
-      
+
       if (video && video.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(video, { folder: 'videos', resource_type: 'video' });
         videoUrl = result.secure_url;
       }
-      
+
       if (thumbnail && thumbnail.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(thumbnail, { folder: 'videos' });
         thumbnailUrl = result.secure_url;
       }
-      
+
       const result = await turso.execute({
         sql: 'INSERT INTO videos (title, description, video_url, thumbnail_url, category) VALUES (?, ?, ?, ?, ?) RETURNING id',
         args: [title, description, videoUrl, thumbnailUrl, category]
@@ -213,12 +230,12 @@ export default async function handler(req: any, res: any) {
     if (route === '/members' && req.method === 'POST') {
       const { name, email, phone, dob, gender, marital_status, occupation, address, membership_date, notes, photo } = req.body;
       let photoUrl = photo;
-      
+
       if (photo && photo.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(photo, { folder: 'members' });
         photoUrl = result.secure_url;
       }
-      
+
       const result = await turso.execute({
         sql: 'INSERT INTO members (name, email, phone, dob, gender, marital_status, occupation, address, membership_date, notes, photo_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id',
         args: [name, email, phone, dob, gender, marital_status, occupation, address, membership_date, notes, photoUrl]
@@ -240,28 +257,28 @@ export default async function handler(req: any, res: any) {
       const { citylightLogo, wordlightLogo, name, tagline } = req.body;
       let citylightUrl = citylightLogo;
       let wordlightUrl = wordlightLogo;
-      
+
       if (citylightLogo && citylightLogo.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(citylightLogo, { folder: 'church-profile' });
         citylightUrl = result.secure_url;
       }
-      
+
       if (wordlightLogo && wordlightLogo.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(wordlightLogo, { folder: 'church-profile' });
         wordlightUrl = result.secure_url;
       }
-      
-      const profileData = JSON.stringify({ 
-        citylightLogo: citylightUrl, 
-        wordlightLogo: wordlightUrl, 
-        name, 
-        tagline 
+
+      const profileData = JSON.stringify({
+        citylightLogo: citylightUrl,
+        wordlightLogo: wordlightUrl,
+        name,
+        tagline
       });
       const existing = await turso.execute({
         sql: "SELECT * FROM site_settings WHERE key = 'church_profile'",
         args: []
       });
-      
+
       if (existing.rows.length > 0) {
         await turso.execute({
           sql: "UPDATE site_settings SET value = ? WHERE key = 'church_profile'",
@@ -273,7 +290,7 @@ export default async function handler(req: any, res: any) {
           args: [profileData]
         });
       }
-      
+
       return res.json({ success: true, citylightLogo: citylightUrl, wordlightLogo: wordlightUrl });
     }
 

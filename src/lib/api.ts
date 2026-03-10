@@ -327,7 +327,7 @@ export const api = {
 
   createGalleryImage: async (data: any) => {
     try {
-      const res = await safeFetch(`${API_URL}/api/gallery`, {
+      const res = await safeFetch(`${API_URL}/api/admin/gallery`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -344,7 +344,7 @@ export const api = {
   },
 
   updateGalleryImage: async (id: number, data: any) => {
-    const res = await safeFetch(`${API_URL}/api/gallery/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/admin/gallery/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
