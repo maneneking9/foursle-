@@ -37,13 +37,20 @@ export default function Volunteer() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Store in localStorage for demo
-    const submissions = JSON.parse(localStorage.getItem('volunteer_submissions') || '[]');
-    submissions.push({ ...formData, date: new Date().toISOString() });
-    localStorage.setItem('volunteer_submissions', JSON.stringify(submissions));
-    setSubmitted(true);
+    try {
+      const { api } = await import('../lib/api');
+      await api.createVolunteerRequest(formData);
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Failed to submit volunteer request:', error);
+      // Fallback to localStorage
+      const submissions = JSON.parse(localStorage.getItem('volunteer_submissions') || '[]');
+      submissions.push({ ...formData, date: new Date().toISOString() });
+      localStorage.setItem('volunteer_submissions', JSON.stringify(submissions));
+      setSubmitted(true);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

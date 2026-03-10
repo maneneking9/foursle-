@@ -1,7 +1,11 @@
 import express from 'express';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { createClient } from '@libsql/client';
 import cloudinary from './src/lib/cloudinary';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
@@ -343,6 +347,61 @@ app.post('/api/membership-requests', async (req, res) => {
   }
 });
 
+// Volunteer Requests
+app.get('/api/volunteer-requests', async (req, res) => {
+  try {
+    const result = await turso.execute('SELECT * FROM volunteer_requests ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch {
+    res.json([]);
+  }
+});
+
+app.post('/api/volunteer-requests', async (req, res) => {
+  const data = req.body;
+  try {
+    const result = await turso.execute({
+      sql: `INSERT INTO volunteer_requests (
+        full_name, email, phone, address, ministry, availability, why_volunteer, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending') RETURNING id`,
+      args: [
+        data.fullName, data.email, data.phone, data.address, 
+        data.ministry, data.availability, data.why
+      ]
+    });
+    res.json({ success: true, id: result.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+app.patch('/api/volunteer-requests/:id', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  try {
+    await turso.execute({
+      sql: 'UPDATE volunteer_requests SET status = ? WHERE id = ?',
+      args: [status, id]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+app.delete('/api/volunteer-requests/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM volunteer_requests WHERE id = ?',
+      args: [id]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
 // Members
 app.get('/api/members', async (req, res) => {
   try {
@@ -613,6 +672,108 @@ app.delete('/api/gallery/:id', async (req, res) => {
   try {
     await turso.execute({
       sql: 'DELETE FROM gallery_images WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Videos - Get all
+app.get('/api/videos', async (req, res) => {
+  try {
+    const result = await turso.execute('SELECT * FROM videos ORDER BY created_at DESC LIMIT 50');
+    res.json(result.rows);
+  } catch {
+    res.json([]);
+  }
+});
+
+// Videos - Create
+app.post('/api/videos', async (req, res) => {
+  const { title, description, video_url, thumbnail_url, category, duration } = req.body;
+  try {
+    const result = await turso.execute({
+      sql: 'INSERT INTO videos (title, description, video_url, thumbnail_url, category, duration) VALUES (?, ?, ?, ?, ?, ?)',
+      args: [title, description, video_url, thumbnail_url, category, duration]
+    });
+    res.json({ success: true, id: result.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Videos - Update
+app.put('/api/videos/:id', async (req, res) => {
+  const { title, description, video_url, thumbnail_url, category, duration, is_featured } = req.body;
+  try {
+    await turso.execute({
+      sql: 'UPDATE videos SET title = ?, description = ?, video_url = ?, thumbnail_url = ?, category = ?, duration = ?, is_featured = ? WHERE id = ?',
+      args: [title, description, video_url, thumbnail_url, category, duration, is_featured, parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Videos - Delete
+app.delete('/api/videos/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM videos WHERE id = ?',
+      args: [parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Flyers - Get all
+app.get('/api/flyers', async (req, res) => {
+  try {
+    const result = await turso.execute('SELECT * FROM flyers WHERE is_active = 1 ORDER BY event_date DESC LIMIT 50');
+    res.json(result.rows);
+  } catch {
+    res.json([]);
+  }
+});
+
+// Flyers - Create
+app.post('/api/flyers', async (req, res) => {
+  const { title, description, image_url, category, event_date } = req.body;
+  try {
+    const result = await turso.execute({
+      sql: 'INSERT INTO flyers (title, description, image_url, category, event_date) VALUES (?, ?, ?, ?, ?)',
+      args: [title, description, image_url, category, event_date]
+    });
+    res.json({ success: true, id: result.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Flyers - Update
+app.put('/api/flyers/:id', async (req, res) => {
+  const { title, description, image_url, category, event_date, is_active } = req.body;
+  try {
+    await turso.execute({
+      sql: 'UPDATE flyers SET title = ?, description = ?, image_url = ?, category = ?, event_date = ?, is_active = ? WHERE id = ?',
+      args: [title, description, image_url, category, event_date, is_active, parseInt(req.params.id)]
+    });
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Flyers - Delete
+app.delete('/api/flyers/:id', async (req, res) => {
+  try {
+    await turso.execute({
+      sql: 'DELETE FROM flyers WHERE id = ?',
       args: [parseInt(req.params.id)]
     });
     res.json({ success: true });

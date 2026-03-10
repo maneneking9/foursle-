@@ -34,6 +34,178 @@ const sampleGuidance: Record<string, { verse: string; guidance: string; feedback
   }
 };
 
+// Extended Bible verses for different topics (more than 10 related verses)
+const extendedVerses: Record<string, string[]> = {
+  lonely: [
+    "Deuteronomy 31:6 - Be strong and courageous...",
+    "Psalm 34:18 - The LORD is near to the brokenhearted...",
+    "Isaiah 41:10 - Do not fear, for I am with you...",
+    "Matthew 28:20 - And surely I am with you always...",
+    "Psalm 23:4 - Though I walk through the valley...",
+    "Romans 8:39 - Nothing can separate us from God's love...",
+    "2 Corinthians 4:17 - Our light affliction...",
+    "Psalm 147:3 - He heals the brokenhearted...",
+    "John 14:18 - I will not leave you as orphans...",
+    "1 Peter 5:7 - Cast all your anxiety on Him...",
+    "Psalm 121:1-2 - I lift up my eyes to the mountains...",
+    "Jeremiah 29:11 - Plans to prosper you..."
+  ],
+  fear: [
+    "Isaiah 41:10 - Do not fear, for I am with you...",
+    "2 Timothy 1:7 - God gave us a spirit of power, love and self-discipline...",
+    "Romans 8:15 - You received the Spirit of adoption...",
+    "1 John 4:18 - There is no fear in love...",
+    "Psalm 27:1 - The LORD is my light and my salvation...",
+    "Deuteronomy 31:6 - Be strong and courageous...",
+    "Joshua 1:9 - Be strong and courageous...",
+    "Proverbs 3:5-6 - Trust in the LORD with all your heart...",
+    "Matthew 6:34 - Do not worry about tomorrow...",
+    "Psalm 56:3-4 - When I am afraid, I will trust in You...",
+    "Isaiah 43:1 - Do not fear, for I have redeemed you...",
+    "Hebrews 13:6 - The Lord is my helper..."
+  ],
+  stress: [
+    "Philippians 4:6-7 - Do not be anxious about anything...",
+    "Matthew 11:28-30 - Come to Me, all who are weary...",
+    "1 Peter 5:7 - Cast all your anxiety on Him...",
+    "Psalm 55:22 - Cast your burdens on the LORD...",
+    "Isaiah 26:3 - You will keep in perfect peace...",
+    "Psalm 34:4 - I sought the LORD, and He answered me...",
+    "Romans 8:28 - All things work together for good...",
+    "2 Corinthians 12:9 - My power is made perfect in weakness...",
+    "Psalm 46:1 - God is our refuge and strength...",
+    "Proverbs 3:5-6 - Trust in the LORD with all your heart...",
+    "Philippians 4:13 - I can do all things through Christ...",
+    "John 16:33 - In this world you will have trouble..."
+  ],
+  hope: [
+    "Romans 15:13 - May the God of hope fill you with all joy...",
+    " Jeremiah 29:11 - Plans to prosper you and not to harm you...",
+    "Psalm 42:5 - Why are you downcast, O my soul? Put your hope in God...",
+    "Romans 8:24-25 - Hope that is seen is not hope...",
+    "1 Peter 1:3 - Born again to a living hope...",
+    "Psalm 71:5 - You are my hope, O Lord...",
+    "Isaiah 40:31 - They who wait for the LORD shall renew their strength...",
+    "Titus 2:13 - Looking for the blessed hope...",
+    "Psalm 130:5 - I wait for the Lord, my soul waits...",
+    "Romans 12:12 - Be patient in affliction, be constant in prayer...",
+    "Lamentations 3:24 - The LORD is my portion, says my soul...",
+    "Psalm 33:18-22 - The eyes of the LORD are on those who fear Him..."
+  ],
+  love: [
+    "John 3:16 - For God so loved the world...",
+    "1 John 4:8 - God is love...",
+    "1 Corinthians 13:4-7 - Love is patient, love is kind...",
+    "Romans 8:38-39 - Nothing can separate us from God's love...",
+    "Song of Solomon 8:6 - Set me as a seal upon your heart...",
+    "Ephesians 3:17-19 - Christ may dwell in your hearts through faith...",
+    "Colossians 3:14 - Above all, put on love...",
+    "1 John 4:16 - God is love, and whoever lives in love lives in God...",
+    "Galatians 5:22-23 - The fruit of the Spirit is love...",
+    "Proverbs 10:12 - Hatred stirs up strife, but love covers all sins...",
+    "Ecclesiastes 3:8 - A time to love...",
+    "Song of Solomon 2:4 - He brought me to the banqueting house..."
+  ],
+  faith: [
+    "Hebrews 11:1 - Faith is the substance of things hoped for...",
+    "Romans 10:17 - Faith comes from hearing...",
+    "James 2:17 - Faith without works is dead...",
+    "Mark 11:22 - Have faith in God...",
+    "2 Corinthians 5:7 - We walk by faith, not by sight...",
+    "Ephesians 2:8-9 - Saved by grace through faith...",
+    "1 Peter 1:8-9 - Though you have not seen Him, you love Him...",
+    "Matthew 17:20 - If you have faith as a mustard seed...",
+    "Luke 17:5 - Increase our faith...",
+    "Romans 1:17 - The righteous shall live by faith...",
+    "Galatians 2:20 - I have been crucified with Christ...",
+    "Philippians 1:6 - He who began a good work in you will carry it on..."
+  ],
+  peace: [
+    "John 14:27 - Peace I leave with you, My peace I give to you...",
+    "Philippians 4:7 - The peace of God, which transcends all understanding...",
+    "Isaiah 26:3 - You will keep in perfect peace...",
+    "Psalm 4:8 - In peace I will lie down and sleep...",
+    "Colossians 3:15 - Let the peace of Christ rule in your hearts...",
+    "Romans 8:6 - The mind governed by the Spirit is life and peace...",
+    "Matthew 10:13 - If the home is deserving, let your peace rest on it...",
+    "2 Thessalonians 3:16 - May the Lord of peace Himself give you peace...",
+    "Psalm 29:11 - The LORD gives strength to His people...",
+    "Isaiah 9:6 - The Prince of Peace...",
+    "John 16:33 - In this world you will have trouble. But take heart! I have overcome the world.",
+    "Psalm 119:165 - Great peace have those who love Your law..."
+  ],
+  joy: [
+    "Nehemiah 8:10 - The joy of the LORD is your strength...",
+    "Psalm 16:11 - In Your presence is fullness of joy...",
+    "Galatians 5:22 - The fruit of the Spirit is love, joy, peace...",
+    "Romans 15:13 - May the God of hope fill you with all joy...",
+    "1 Peter 1:8-9 - Though you have not seen Him, you love Him...",
+    "Psalm 126:5-6 - Those who sow in tears shall reap with joyful shouting...",
+    "Isaiah 12:3 - With joy you will draw water from the wells of salvation...",
+    "Philippians 4:4 - Rejoice in the Lord always...",
+    "Psalm 5:11 - Let all who take refuge in You rejoice...",
+    "Luke 2:10 - I bring you good news of great joy...",
+    "Psalm 30:11-12 - You turned my mourning into dancing...",
+    "Zephaniah 3:17 - He will rejoice over you with singing..."
+  ],
+  strength: [
+    "Isaiah 40:31 - They who wait for the LORD shall renew their strength...",
+    "Philippians 4:13 - I can do all things through Christ...",
+    "Psalm 18:32-39 - The LORD is my rock, my fortress, and my deliverer...",
+    "2 Samuel 22:40 - You have armed me with strength for the battle...",
+    "Deuteronomy 31:6 - Be strong and courageous...",
+    "Joshua 1:9 - Be strong and courageous...",
+    "Psalm 46:1 - God is our refuge and strength...",
+    "Ephesians 6:10 - Be strong in the Lord and in His mighty power...",
+    "Psalm 28:7-8 - The LORD is my strength and my shield...",
+    "Isaiah 12:2 - The LORD God is my strength...",
+    "Habakkuk 3:19 - The Sovereign LORD is my strength...",
+    "Exodus 15:2 - The LORD is my strength and my song..."
+  ],
+  guidance: [
+    "Psalm 32:8 - I will instruct you and teach you in the way you should go...",
+    "Proverbs 3:5-6 - Trust in the LORD with all your heart...",
+    "Psalm 119:105 - Your word is a lamp to my feet...",
+    "James 1:5 - If any of you lacks wisdom, ask God...",
+    "Psalm 37:23-24 - The LORD makes firm the steps of the one who delights in Him...",
+    "Proverbs 16:9 - In their hearts humans plan their course, but the LORD establishes their steps...",
+    "Isaiah 58:11 - The LORD will guide you always...",
+    "Psalm 25:9 - He teaches the humble His way...",
+    "John 16:13 - When the Spirit of truth comes, He will guide you into all truth...",
+    "Psalm 73:24 - You guide me with Your counsel...",
+    "Proverbs 4:11-13 - I teach you the way you should go...",
+    "Psalm 143:8-10 - Show me the way I should go..."
+  ],
+  healing: [
+    "Exodus 15:26 - I am the LORD who heals you...",
+    "Psalm 103:2-3 - Praise the LORD, my soul, and forget not all His benefits...",
+    "James 5:14-15 - Is anyone among you sick? Let them call the elders...",
+    "1 Peter 2:24 - By His wounds we are healed...",
+    "Psalm 41:3 - The LORD will sustain them on their sickbed...",
+    "Isaiah 53:5 - By His wounds we are healed...",
+    "Jeremiah 30:17 - I will restore you to health and heal your wounds...",
+    "Matthew 9:35 - Jesus went through all the towns and villages...",
+    "Mark 5:34 - Daughter, your faith has healed you...",
+    "Luke 4:18-19 - He has sent me to proclaim freedom for the prisoners...",
+    "Psalm 147:3 - He heals the brokenhearted and binds up their wounds...",
+    "Revelation 21:4 - He will wipe every tear from their eyes..."
+  ],
+  default: [
+    "Joshua 1:9 - Be strong and courageous...",
+    "Philippians 4:6-7 - Do not be anxious about anything...",
+    "Romans 8:28 - All things work together for good...",
+    "Isaiah 40:31 - They who wait for the LORD shall renew their strength...",
+    "Psalm 23:1-4 - The LORD is my shepherd...",
+    "John 3:16 - For God so loved the world...",
+    "1 Peter 5:7 - Cast all your anxiety on Him...",
+    "Proverbs 3:5-6 - Trust in the LORD with all your heart...",
+    "Matthew 11:28-30 - Come to Me, all who are weary...",
+    "2 Corinthians 4:17 - Our light affliction is producing...",
+    "Psalm 119:105 - Your word is a lamp to my feet...",
+    "Romans 15:13 - May the God of hope fill you with all joy..."
+  ]
+};
+
 export default function BibleGuidance() {
   const { isWordLight } = useSite();
   const [query, setQuery] = useState('');
@@ -41,6 +213,7 @@ export default function BibleGuidance() {
   const [streamingText, setStreamingText] = useState('');
   const [feedback, setFeedback] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [relatedVerses, setRelatedVerses] = useState<string[]>([]);
   const [showFlyerPreview, setShowFlyerPreview] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -83,6 +256,7 @@ export default function BibleGuidance() {
     setLoading(true);
     setStreamingText('');
     setFeedback('');
+    setRelatedVerses([]);
     setShowFlyerPreview(false);
     setSuggestions([]);
     
@@ -90,14 +264,43 @@ export default function BibleGuidance() {
     if (!ai) {
       // Find matching guidance based on keywords
       const lowercaseQuery = searchQuery.toLowerCase();
-      let matchedGuidance = sampleGuidance.default;
       
-      for (const [key, value] of Object.entries(sampleGuidance)) {
-        if (key !== 'default' && lowercaseQuery.includes(key)) {
-          matchedGuidance = value;
-          break;
+      // Extended keyword mapping for all topics
+      const topicKeywords: Record<string, string[]> = {
+        lonely: ['lonely', 'alone', 'isolation', 'abandoned', 'rejected', 'isolated', 'friendless', 'deserted'],
+        fear: ['fear', 'afraid', 'terrified', 'scared', 'frightened', 'anxious', 'worried', 'panic', 'dread'],
+        stress: ['stress', 'stressed', 'overwhelmed', 'burden', 'pressure', 'exhausted', 'tired', 'burnout'],
+        hope: ['hope', 'hopeless', 'despair', 'lost', 'future', 'uncertainty', 'discouraged'],
+        love: ['love', 'unloved', 'heartbreak', 'relationship', 'marriage', 'dating', 'crush', 'affection'],
+        faith: ['faith', 'doubt', 'belief', 'unbelief', 'questioning', 'struggle', 'trust'],
+        peace: ['peace', 'conflict', 'war', 'argument', 'dispute', 'restless', 'turbulent'],
+        joy: ['joy', 'sad', 'depressed', 'unhappy', 'sorrow', 'grief', 'mourning', 'cry', 'tears'],
+        strength: ['weak', 'weakness', 'powerless', 'helpless', 'vulnerable', 'struggling', 'unable'],
+        guidance: ['guidance', 'direction', 'confused', 'lost', 'decision', 'choice', 'path', 'purpose'],
+        healing: ['sick', 'illness', 'disease', 'pain', 'hurt', 'injury', 'wound', 'recovery', 'hurt']
+      };
+      
+      let matchedGuidance = sampleGuidance.default;
+      let related = [] as string[];
+      
+      // Check all topic keywords
+      for (const [topic, keywords] of Object.entries(topicKeywords)) {
+        for (const keyword of keywords) {
+          if (lowercaseQuery.includes(keyword)) {
+            matchedGuidance = sampleGuidance[topic as keyof typeof sampleGuidance] || sampleGuidance.default;
+            related = extendedVerses[topic] || extendedVerses.default || [];
+            break;
+          }
         }
+        if (related.length > 0) break;
       }
+      
+      // If no match found, use default
+      if (related.length === 0) {
+        related = extendedVerses.default || [];
+      }
+      
+      setRelatedVerses(related);
       
       // Simulate typing effect
       const fullText = `${matchedGuidance.verse} - ${matchedGuidance.guidance}`;
@@ -130,7 +333,17 @@ export default function BibleGuidance() {
         setStreamingText(fullText);
       }
 
-      // Step 2: Automatic Feedback/Reflection
+      // Step 2: Get related verses
+      const versesResponse = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Provide 12 Bible verses related to "${searchQuery}". List them as: Book Chapter:Verse - Short summary. Keep each to 50 characters max.`,
+      });
+      
+      const versesText = versesResponse.text || '';
+      const verses = versesText.split('\n').filter(v => v.trim()).slice(0, 12);
+      setRelatedVerses(verses.length > 0 ? verses : extendedVerses.default || []);
+
+      // Step 3: Automatic Feedback/Reflection
       const feedbackResponse = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: `Based on this guidance: "${fullText}", provide a short 1-sentence "Spiritual Feedback" or reflection for the user to think about.`,
@@ -332,6 +545,28 @@ export default function BibleGuidance() {
                         >
                           <p className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-60">Spiritual Feedback</p>
                           <p className="text-sm italic">{feedback}</p>
+                        </motion.div>
+                      )}
+
+                      {/* Related Bible Verses */}
+                      {relatedVerses.length > 0 && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100"
+                        >
+                          <p className="text-[10px] font-bold uppercase tracking-widest mb-3 opacity-70 text-blue-800">12 Related Bible Verses</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {relatedVerses.slice(0, 12).map((verse, index) => (
+                              <div 
+                                key={index}
+                                className="text-xs p-2 rounded-lg bg-white/70 text-slate-700 hover:bg-white transition-colors cursor-pointer border border-blue-100"
+                                title="Click to search this verse"
+                              >
+                                {verse}
+                              </div>
+                            ))}
+                          </div>
                         </motion.div>
                       )}
                     </div>

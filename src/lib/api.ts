@@ -187,7 +187,7 @@ export const api = {
   },
 
   deleteSermon: async (id: number) => {
-    const res = await safeFetch(`${API_URL}/api/sermons/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/admin/sermons/${id}`, {
       method: 'DELETE'
     });
     return res.json();
@@ -340,31 +340,94 @@ export const api = {
   },
 
   deleteGalleryImage: async (id: number) => {
-    const res = await safeFetch(`${API_URL}/api/gallery/${id}`, {
+    const res = await safeFetch(`${API_URL}/api/admin/gallery/${id}`, {
+      method: 'DELETE'
+    });
+    return res.json();
+  },
+
+  // Videos
+  getVideos: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/videos`);
+      return res.json();
+    } catch {
+      return [];
+    }
+  },
+
+  createVideo: async (data: any) => {
+    const res = await safeFetch(`${API_URL}/api/videos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  updateVideo: async (id: number, data: any) => {
+    const res = await safeFetch(`${API_URL}/api/videos/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  deleteVideo: async (id: number) => {
+    const res = await safeFetch(`${API_URL}/api/videos/${id}`, {
+      method: 'DELETE'
+    });
+    return res.json();
+  },
+
+  // Flyers
+  getFlyers: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/flyers`);
+      return res.json();
+    } catch {
+      return [];
+    }
+  },
+
+  createFlyer: async (data: any) => {
+    const res = await safeFetch(`${API_URL}/api/flyers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  updateFlyer: async (id: number, data: any) => {
+    const res = await safeFetch(`${API_URL}/api/flyers/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  deleteFlyer: async (id: number) => {
+    const res = await safeFetch(`${API_URL}/api/flyers/${id}`, {
       method: 'DELETE'
     });
     return res.json();
   },
 
   uploadFile: async (file: File, folder?: string) => {
-    const reader = new FileReader();
-    return new Promise((resolve, reject) => {
-      reader.onload = async () => {
-        const res = await safeFetch(`${API_URL}/api/upload`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            file: reader.result, 
-            folder,
-            resource_type: file.type.startsWith('video') ? 'video' : 'auto'
-          })
-        });
-        const data = await res.json();
-        resolve(data.url);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folder || 'uploads');
+    formData.append('resource_type', file.type.startsWith('video') ? 'video' : 'auto');
+    
+    const res = await safeFetch(`${API_URL}/api/upload-file`, {
+      method: 'POST',
+      body: formData
     });
+    const data = await res.json();
+    return data.url;
   },
 
   getBranchImages: async () => {
@@ -547,5 +610,117 @@ export const api = {
     } catch {
       return [];
     }
+  },
+
+  getVolunteerRequests: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/volunteer-requests`);
+      return res.json();
+    } catch {
+      return [];
+    }
+  },
+
+  updateVolunteerRequest: async (id: number, status: string) => {
+    const res = await safeFetch(`${API_URL}/api/volunteer-requests/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    return res.json();
+  },
+
+  deleteVolunteerRequest: async (id: number) => {
+    const res = await safeFetch(`${API_URL}/api/volunteer-requests/${id}`, {
+      method: 'DELETE'
+    });
+    return res.json();
+  },
+
+  createVolunteerRequest: async (data: any) => {
+    const res = await safeFetch(`${API_URL}/api/volunteer-requests`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  // Finance Management
+  getTransactions: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/finance/transactions`);
+      return res.json();
+    } catch {
+      return [];
+    }
+  },
+
+  createTransaction: async (data: any) => {
+    const res = await safeFetch(`${API_URL}/api/finance/transactions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  deleteTransaction: async (id: number) => {
+    const res = await safeFetch(`${API_URL}/api/admin/transactions/${id}`, {
+      method: 'DELETE'
+    });
+    return res.json();
+  },
+
+  getFinanceSummary: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/finance/summary`);
+      return res.json();
+    } catch {
+      return { income: 0, expenses: 0, balance: 0 };
+    }
+  },
+
+  // New Christians
+  getNewChristians: async () => {
+    try {
+      const res = await safeFetch(`${API_URL}/api/new-christians`);
+      return res.json();
+    } catch {
+      return [];
+    }
+  },
+
+  createNewChristian: async (data: any) => {
+    const res = await safeFetch(`${API_URL}/api/new-christians`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  deleteNewChristian: async (id: number) => {
+    const res = await safeFetch(`${API_URL}/api/admin/newchristians/${id}`, {
+      method: 'DELETE'
+    });
+    return res.json();
+  },
+
+  // Members Management
+  createMember: async (data: any) => {
+    const res = await safeFetch(`${API_URL}/api/admin/members`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
+  deleteMember: async (id: number) => {
+    const res = await safeFetch(`${API_URL}/api/admin/members/${id}`, {
+      method: 'DELETE'
+    });
+    return res.json();
   }
 };

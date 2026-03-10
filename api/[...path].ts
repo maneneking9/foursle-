@@ -161,6 +161,49 @@ export default async function handler(req: any, res: any) {
       return res.json(result.rows);
     }
 
+    // New Christians
+    if (route === '/new-christians' && req.method === 'GET') {
+      const result = await turso.execute('SELECT * FROM new_christians ORDER BY date DESC');
+      return res.json(result.rows);
+    }
+
+    // Finance
+    if (route === '/finance/transactions' && req.method === 'GET') {
+      const result = await turso.execute('SELECT * FROM transactions ORDER BY date DESC');
+      return res.json(result.rows);
+    }
+
+    if (route === '/finance/summary' && req.method === 'GET') {
+      const result = await turso.execute('SELECT type, SUM(amount) as total FROM transactions GROUP BY type');
+      let income = 0, expenses = 0;
+      result.rows.forEach((row: any) => {
+        if (row.type === 'income') income = row.total;
+        if (row.type === 'expense') expenses = row.total;
+      });
+      return res.json({ income, expenses, balance: income - expenses });
+    }
+
+    // Videos
+    if (route === '/videos' && req.method === 'GET') {
+      const result = await turso.execute('SELECT * FROM videos ORDER BY created_at DESC');
+      return res.json(result.rows);
+    }
+
+    // Members
+    if (route === '/members' && req.method === 'GET') {
+      const result = await turso.execute('SELECT * FROM members ORDER BY membership_date DESC');
+      return res.json(result.rows);
+    }
+
+    // Upload endpoint
+    if (route === '/upload' && req.method === 'POST') {
+      const { file, folder, resource_type } = req.body;
+      if (!file) return res.status(400).json({ error: 'No file provided' });
+      
+      // Return the base64 as-is for now (will be uploaded to Cloudinary by admin endpoint)
+      return res.json({ url: file });
+    }
+
     return res.status(404).json({ error: 'Route not found' });
   } catch (error: any) {
     console.error('API Error:', error);

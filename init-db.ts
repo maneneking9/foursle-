@@ -239,6 +239,56 @@ async function initDatabase() {
     console.log('✓ Default branches created');
   }
 
+  // Videos table
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS videos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT,
+      video_url TEXT NOT NULL,
+      thumbnail_url TEXT,
+      category TEXT,
+      duration TEXT,
+      views INTEGER DEFAULT 0,
+      likes INTEGER DEFAULT 0,
+      is_featured INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  console.log('✓ Videos table created');
+
+  // Volunteer requests table
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS volunteer_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      full_name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      phone TEXT,
+      address TEXT,
+      ministry TEXT NOT NULL,
+      availability TEXT,
+      why_volunteer TEXT,
+      status TEXT DEFAULT 'pending',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  console.log('✓ Volunteer requests table created');
+
+  // Flyers table
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS flyers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT,
+      image_url TEXT NOT NULL,
+      category TEXT,
+      event_date TEXT,
+      is_active INTEGER DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  console.log('✓ Flyers table created');
+
   console.log('\n✅ Database initialization complete!');
 }
 

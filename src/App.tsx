@@ -72,6 +72,7 @@ export default function App() {
   if (currentPath === '/membership') return <MembershipRequest />;
   if (currentPath === '/prayer') return <PrayerRequest />;
   if (currentPath === '/volunteer') return <Volunteer />;
+  if (currentPath === '/bible-study') return <><Navbar /><BibleStudy /><Footer /></>;
   if (currentPath === '/dashboard') return <UserDashboard />;
   if (currentPath === '/admin') return <AdminDashboard />;
 

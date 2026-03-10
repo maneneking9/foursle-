@@ -55,7 +55,7 @@ export default async function handler(req: any, res: any) {
     // Events Admin
     if (route === '/events' && req.method === 'POST') {
       const { title, description, date, location, image } = req.body;
-      let imageUrl = null;
+      let imageUrl = image;
       
       if (image && image.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(image, { folder: 'events' });
@@ -67,7 +67,7 @@ export default async function handler(req: any, res: any) {
         args: [title, description, date, location, imageUrl]
       });
       
-      return res.json({ id: result.rows[0].id });
+      return res.json({ id: result.rows[0].id, image_url: imageUrl });
     }
 
     if (route.startsWith('/events/') && req.method === 'DELETE') {
@@ -105,16 +105,134 @@ export default async function handler(req: any, res: any) {
     // Gallery Admin
     if (route === '/gallery' && req.method === 'POST') {
       const { title, image, category } = req.body;
+      let imageUrl = image;
       
       if (image && image.startsWith('data:')) {
         const result = await cloudinary.uploader.upload(image, { folder: 'gallery' });
-        const dbResult = await turso.execute({
-          sql: 'INSERT INTO gallery_images (title, image_url, category) VALUES (?, ?, ?) RETURNING id',
-          args: [title, result.secure_url, category]
-        });
-        
-        return res.json({ id: dbResult.rows[0].id, image_url: result.secure_url });
+        imageUrl = result.secure_url;
       }
+      
+      const dbResult = await turso.execute({
+        sql: 'INSERT INTO gallery_images (title, image_url, category) VALUES (?, ?, ?) RETURNING id',
+        args: [title, imageUrl, category]
+      });
+      
+      return res.json({ id: dbResult.rows[0].id, image_url: imageUrl });
+    }
+
+    if (route.startsWith('/gallery/') && req.method === 'DELETE') {
+      const id = route.split('/')[2];
+      await turso.execute({
+        sql: 'DELETE FROM gallery_images WHERE id = ?',
+        args: [id]
+      });
+      return res.json({ success: true });
+    }
+
+    // Sermons Delete
+    if (route.startsWith('/sermons/') && req.method === 'DELETE') {
+      const id = route.split('/')[2];
+      await turso.execute({
+        sql: 'DELETE FROM sermons WHERE id = ?',
+        args: [id]
+      });
+      return res.json({ success: true });
+    }
+
+    // New Christians
+    if (route === '/newchristians' && req.method === 'POST') {
+      const { name, email, phone, date, notes } = req.body;
+      const result = await turso.execute({
+        sql: 'INSERT INTO new_christians (name, email, phone, date, notes) VALUES (?, ?, ?, ?, ?) RETURNING id',
+        args: [name, email, phone, date, notes]
+      });
+      return res.json({ id: result.rows[0].id });
+    }
+
+    if (route.startsWith('/newchristians/') && req.method === 'DELETE') {
+      const id = route.split('/')[2];
+      await turso.execute({
+        sql: 'DELETE FROM new_christians WHERE id = ?',
+        args: [id]
+      });
+      return res.json({ success: true });
+    }
+
+    // Finance Transactions
+    if (route === '/transactions' && req.method === 'POST') {
+      const { type, category, amount, description, date, payment_method } = req.body;
+      const result = await turso.execute({
+        sql: 'INSERT INTO transactions (type, category, amount, description, date, payment_method) VALUES (?, ?, ?, ?, ?, ?) RETURNING id',
+        args: [type, category, amount, description, date, payment_method || 'cash']
+      });
+      return res.json({ id: result.rows[0].id });
+    }
+
+    if (route.startsWith('/transactions/') && req.method === 'DELETE') {
+      const id = route.split('/')[2];
+      await turso.execute({
+        sql: 'DELETE FROM transactions WHERE id = ?',
+        args: [id]
+      });
+      return res.json({ success: true });
+    }
+
+    // Videos
+    if (route === '/videos' && req.method === 'POST') {
+      const { title, description, video, thumbnail, category } = req.body;
+      let videoUrl = video;
+      let thumbnailUrl = thumbnail;
+      
+      if (video && video.startsWith('data:')) {
+        const result = await cloudinary.uploader.upload(video, { folder: 'videos', resource_type: 'video' });
+        videoUrl = result.secure_url;
+      }
+      
+      if (thumbnail && thumbnail.startsWith('data:')) {
+        const result = await cloudinary.uploader.upload(thumbnail, { folder: 'videos' });
+        thumbnailUrl = result.secure_url;
+      }
+      
+      const result = await turso.execute({
+        sql: 'INSERT INTO videos (title, description, video_url, thumbnail_url, category) VALUES (?, ?, ?, ?, ?) RETURNING id',
+        args: [title, description, videoUrl, thumbnailUrl, category]
+      });
+      return res.json({ id: result.rows[0].id, video_url: videoUrl, thumbnail_url: thumbnailUrl });
+    }
+
+    if (route.startsWith('/videos/') && req.method === 'DELETE') {
+      const id = route.split('/')[2];
+      await turso.execute({
+        sql: 'DELETE FROM videos WHERE id = ?',
+        args: [id]
+      });
+      return res.json({ success: true });
+    }
+
+    // Members
+    if (route === '/members' && req.method === 'POST') {
+      const { name, email, phone, dob, gender, marital_status, occupation, address, membership_date, notes, photo } = req.body;
+      let photoUrl = photo;
+      
+      if (photo && photo.startsWith('data:')) {
+        const result = await cloudinary.uploader.upload(photo, { folder: 'members' });
+        photoUrl = result.secure_url;
+      }
+      
+      const result = await turso.execute({
+        sql: 'INSERT INTO members (name, email, phone, dob, gender, marital_status, occupation, address, membership_date, notes, photo_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id',
+        args: [name, email, phone, dob, gender, marital_status, occupation, address, membership_date, notes, photoUrl]
+      });
+      return res.json({ id: result.rows[0].id, photo_url: photoUrl });
+    }
+
+    if (route.startsWith('/members/') && req.method === 'DELETE') {
+      const id = route.split('/')[2];
+      await turso.execute({
+        sql: 'DELETE FROM members WHERE id = ?',
+        args: [id]
+      });
+      return res.json({ success: true });
     }
 
     // Church Profile Update

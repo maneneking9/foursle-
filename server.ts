@@ -1,9 +1,17 @@
 import express from 'express';
+import multer from 'multer';
 import db from './src/lib/db';
 import cloudinary from './src/lib/cloudinary';
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+
+// Multer setup for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
+});
 
 // CORS
 app.use((req, res, next) => {
@@ -346,7 +354,7 @@ app.delete('/api/gallery/:id', (req, res) => {
   res.json({ success: true });
 });
 
-// Upload endpoint
+// Upload endpoint (base64)
 app.post('/api/upload', async (req, res) => {
   const { file, folder, resource_type } = req.body;
   const result = await cloudinary.uploader.upload(file, { 
@@ -354,6 +362,27 @@ app.post('/api/upload', async (req, res) => {
     resource_type: resource_type || 'auto'
   });
   res.json({ url: result.secure_url });
+});
+
+// Direct file upload from PC
+app.post('/api/upload-file', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    
+    const { folder = 'uploads', resource_type = 'auto' } = req.body;
+    const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    
+    const result = await cloudinary.uploader.upload(base64, { 
+      folder,
+      resource_type
+    });
+    
+    res.json({ success: true, url: result.secure_url });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 // Branch Images
@@ -604,6 +633,70 @@ app.get('/api/membership-requests', (req, res) => {
     res.json(requests);
   } catch {
     res.json([]);
+  }
+});
+
+// Volunteer Requests
+app.post('/api/volunteer-requests', (req, res) => {
+  const data = req.body;
+  try {
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS volunteer_requests (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT,
+        address TEXT,
+        ministry TEXT NOT NULL,
+        availability TEXT,
+        why_volunteer TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run();
+    
+    const stmt = db.prepare(`
+      INSERT INTO volunteer_requests (
+        full_name, email, phone, address, ministry, availability, why_volunteer
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+    const info = stmt.run(
+      data.fullName, data.email, data.phone, data.address, 
+      data.ministry, data.availability, data.why
+    );
+    res.json({ success: true, id: info.lastInsertRowid });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+app.get('/api/volunteer-requests', (req, res) => {
+  try {
+    const requests = db.prepare('SELECT * FROM volunteer_requests ORDER BY created_at DESC').all();
+    res.json(requests);
+  } catch {
+    res.json([]);
+  }
+});
+
+app.patch('/api/volunteer-requests/:id', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  try {
+    db.prepare('UPDATE volunteer_requests SET status = ? WHERE id = ?').run(status, id);
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+app.delete('/api/volunteer-requests/:id', (req, res) => {
+  const { id } = req.params;
+  try {
+    db.prepare('DELETE FROM volunteer_requests WHERE id = ?').run(id);
+    res.json({ success: true });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
   }
 });
 

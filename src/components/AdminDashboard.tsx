@@ -3,10 +3,15 @@ import {
   LayoutDashboard, Calendar, Video, MessageSquare, Users, Bell, Image, 
   MapPin, BookOpen, Settings, LogOut, Plus, Edit2, Trash2, X, 
   Upload, Eye, Check, ChevronRight, Home, UserPlus, Church, Search,
-  BarChart3, Mail, Phone, Clock, Save, RefreshCw, User
+  BarChart3, Mail, Phone, Clock, Save, RefreshCw, User, UserCheck, HeartHandshake
 } from 'lucide-react';
 import { api } from '../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
+import NewChristiansManager from './admin/NewChristiansManager';
+import FinanceManager from './admin/FinanceManager';
+import VideosManager from './admin/VideosManager';
+import MembersManager from './admin/MembersManager';
+import ImageUpload from './admin/ImageUpload';
 
 // Types
 interface Branch {
@@ -125,6 +130,8 @@ export default function AdminDashboard() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
+  const [membershipRequests, setMembershipRequests] = useState<any[]>([]);
+  const [volunteerRequests, setVolunteerRequests] = useState<any[]>([]);
 
   // Form state
   const [formData, setFormData] = useState<any>({});
@@ -182,6 +189,14 @@ export default function AdminDashboard() {
           break;
         case 'members':
           setMembers(await api.getMembers());
+          break;
+        case 'membership-requests':
+          const membershipData = await api.getMembershipRequests();
+          setMembershipRequests(membershipData);
+          break;
+        case 'volunteer-requests':
+          const volunteerData = await api.getVolunteerRequests();
+          setVolunteerRequests(volunteerData);
           break;
       }
     } catch (error) {
@@ -302,6 +317,9 @@ export default function AdminDashboard() {
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
     { id: 'branches', name: 'Church Branches', icon: Church },
+    { id: 'newchristians', name: 'New Christians', icon: UserPlus },
+    { id: 'finance', name: 'Finance', icon: BarChart3 },
+    { id: 'videos', name: 'Videos', icon: Video },
     { id: 'slides', name: 'Hero Slides', icon: Image },
     { id: 'events', name: 'Events', icon: Calendar },
     { id: 'sermons', name: 'Sermons', icon: Video },
@@ -310,6 +328,8 @@ export default function AdminDashboard() {
     { id: 'announcements', name: 'Announcements', icon: Bell },
     { id: 'gallery', name: 'Gallery', icon: Image },
     { id: 'members', name: 'Members', icon: UserPlus },
+    { id: 'membership-requests', name: 'Membership Requests', icon: UserCheck },
+    { id: 'volunteer-requests', name: 'Volunteer Requests', icon: HeartHandshake },
     { id: 'settings', name: 'Settings', icon: Settings },
   ];
 
@@ -769,36 +789,170 @@ export default function AdminDashboard() {
               )}
 
               {/* Members */}
-              {activeSection === 'members' && (
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="text-left px-6 py-4 font-semibold">Name</th>
-                        <th className="text-left px-6 py-4 font-semibold">Email</th>
-                        <th className="text-left px-6 py-4 font-semibold">Role</th>
-                        <th className="text-left px-6 py-4 font-semibold">Joined</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {members.map((member) => (
-                        <tr key={member.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 font-medium">{member.name}</td>
-                          <td className="px-6 py-4">{member.email}</td>
-                          <td className="px-6 py-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              member.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
-                            }`}>
-                              {member.role}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">{member.created_at ? new Date(member.created_at).toLocaleDateString() : 'N/A'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              {activeSection === 'members' && <MembersManager />}
+
+              {/* Membership Requests */}
+              {activeSection === 'membership-requests' && (
+                <div className="bg-white rounded-2xl p-8 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-bold">Membership Requests</h3>
+                    <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                      {membershipRequests.length} requests
+                    </span>
+                  </div>
+                  
+                  {membershipRequests.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">No membership requests yet</p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Phone</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Ministry</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y">
+                          {membershipRequests.map((request: any) => (
+                            <tr key={request.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-3">{request.full_name}</td>
+                              <td className="px-4 py-3">{request.email}</td>
+                              <td className="px-4 py-3">{request.phone_number}</td>
+                              <td className="px-4 py-3">{request.ministry || 'N/A'}</td>
+                              <td className="px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  request.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                  request.status === 'approved' ? 'bg-green-100 text-green-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {request.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-500">
+                                {new Date(request.created_at).toLocaleDateString()}
+                              </td>
+                              <td className="px-4 py-3">
+                                <button 
+                                  onClick={() => alert(`Full Details:\n${JSON.stringify(request, null, 2)}`)}
+                                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                >
+                                  View Details
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
+
+              {/* Volunteer Requests */}
+              {activeSection === 'volunteer-requests' && (
+                <div className="bg-white rounded-2xl p-8 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-bold">Volunteer Requests</h3>
+                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                      {volunteerRequests.length} requests
+                    </span>
+                  </div>
+                  
+                  {volunteerRequests.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">No volunteer requests yet</p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Phone</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Ministry</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Availability</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y">
+                          {volunteerRequests.map((request: any) => (
+                            <tr key={request.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-3">{request.full_name}</td>
+                              <td className="px-4 py-3">{request.email}</td>
+                              <td className="px-4 py-3">{request.phone || 'N/A'}</td>
+                              <td className="px-4 py-3">{request.ministry}</td>
+                              <td className="px-4 py-3">{request.availability || 'N/A'}</td>
+                              <td className="px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  request.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                  request.status === 'approved' ? 'bg-green-100 text-green-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {request.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-500">
+                                {new Date(request.created_at).toLocaleDateString()}
+                              </td>
+                              <td className="px-4 py-3">
+                                <div className="flex gap-2">
+                                  <button 
+                                    onClick={() => alert(`Full Details:\n${JSON.stringify(request, null, 2)}`)}
+                                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                  >
+                                    View
+                                  </button>
+                                  {request.status === 'pending' && (
+                                    <>
+                                      <button 
+                                        onClick={async () => {
+                                          await api.updateVolunteerRequest(request.id, 'approved');
+                                          setVolunteerRequests(volunteerRequests.map((r: any) => 
+                                            r.id === request.id ? { ...r, status: 'approved' } : r
+                                          ));
+                                        }}
+                                        className="text-green-600 hover:text-green-800 text-sm font-medium"
+                                      >
+                                        Approve
+                                      </button>
+                                      <button 
+                                        onClick={async () => {
+                                          await api.updateVolunteerRequest(request.id, 'rejected');
+                                          setVolunteerRequests(volunteerRequests.map((r: any) => 
+                                            r.id === request.id ? { ...r, status: 'rejected' } : r
+                                          ));
+                                        }}
+                                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                                      >
+                                        Reject
+                                      </button>
+                                    </>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* New Christians */}
+              {activeSection === 'newchristians' && <NewChristiansManager />}
+
+              {/* Finance */}
+              {activeSection === 'finance' && <FinanceManager />}
+
+              {/* Videos */}
+              {activeSection === 'videos' && <VideosManager />}
 
               {/* Settings */}
               {activeSection === 'settings' && (
@@ -1014,12 +1168,11 @@ export default function AdminDashboard() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Image URL</label>
-                      <input 
-                        type="text" 
-                        value={formData.image_url || formData.image || ''}
-                        onChange={(e) => setFormData({...formData, image_url: e.target.value})}
-                        className="w-full px-4 py-2 border rounded-lg"
+                      <label className="block text-sm font-medium mb-2">Upload Image</label>
+                      <ImageUpload
+                        value={formData.image || formData.image_url || ''}
+                        onChange={(url) => setFormData({...formData, image: url, image_url: url})}
+                        label=""
                       />
                     </div>
                     <div>
@@ -1076,13 +1229,23 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Image URL</label>
+                      <label className="block text-sm font-medium mb-2">Upload Image</label>
                       <input 
-                        type="text" 
-                        value={formData.image_url || ''}
-                        onChange={(e) => setFormData({...formData, image_url: e.target.value})}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setFormData({...formData, image: reader.result as string});
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
+                      {formData.image && <p className="text-xs text-green-600 mt-1">✓ Image uploaded</p>}
                     </div>
                   </>
                 )}
@@ -1232,13 +1395,23 @@ export default function AdminDashboard() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Image URL</label>
+                      <label className="block text-sm font-medium mb-2">Upload Image</label>
                       <input 
-                        type="text" 
-                        value={formData.image_url || ''}
-                        onChange={(e) => setFormData({...formData, image_url: e.target.value})}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setFormData({...formData, image: reader.result as string});
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
                         className="w-full px-4 py-2 border rounded-lg"
                       />
+                      {formData.image && <p className="text-xs text-green-600 mt-1">✓ Image uploaded</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Category</label>

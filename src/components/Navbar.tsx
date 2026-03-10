@@ -119,9 +119,8 @@ export default function Navbar() {
         { name: t('ourMinistry'), href: '#ministry' },
       ]
     },
-    { name: t('bibleStudy'), id: 'bibleStudy', href: '#bible-study', icon: BookOpen },
+    { name: t('bibleStudy'), id: 'bibleStudy', href: '/bible-study', icon: BookOpen },
     { name: t('ourMinistries'), id: 'ministries', href: '#ministries', icon: Users },
-    { name: t('volunteer'), id: 'volunteer', href: '#volunteer', icon: Users },
     { name: t('branches'), id: 'branches', href: '#branches', icon: Map },
   ] : [
     { name: t('home'), id: 'home', href: '#home', icon: Home },
@@ -149,7 +148,7 @@ export default function Navbar() {
         { name: t('ourMinistry'), href: '#ministry' },
       ]
     },
-    { name: t('bibleStudy'), id: 'bibleStudy', href: '#bible-study', icon: BookOpen },
+    { name: t('bibleStudy'), id: 'bibleStudy', href: '/bible-study', icon: BookOpen },
     { name: t('branches'), id: 'branches', href: '#branches', icon: Map },
     { name: t('volunteer'), id: 'volunteer', href: '#volunteer', icon: Heart },
     { 
