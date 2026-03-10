@@ -13,9 +13,9 @@ services:
       - key: TURSO_AUTH_TOKEN
         value: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzMxMjY1MzksImlkIjoiMDE5Y2NlNWQtMGQwMS03ODc5LWI2Y2YtZDM2NjVhNmNjN2U2IiwicmlkIjoiZDM1NjhiZDUtNzFlMy00YzgxLWJkNGItNjRjNGQyZGMxOTBmIn0.fzoAvS1xGeswNHoUNrvf92uZIbgO9rVrjVrd_GhJfVkJZ28DXCcrc1B4anWpd-q6N4Z-E-Cm6DnKXllfqQx9Dw
       - key: CLOUDINARY_CLOUD_NAME
-        sync: true
+        value: root
       - key: CLOUDINARY_API_KEY
-        sync: true
+        value: "289699272556856"
       - key: CLOUDINARY_API_SECRET
-        sync: true
+        value: RlS9BumbzEr835Qf1c2cMlnq_yg
     autoDeploy: true
